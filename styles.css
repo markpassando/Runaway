@@ -1,3 +1,11 @@
 #canvas {
   border: 10px solid red;
+  margin: 0 auto;
+  display: block;
+  background-image: url(assets/bg.png);
+  background-size: cover;
+}
+
+h1 {
+  text-align: center;
 }
