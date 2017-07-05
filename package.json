@@ -1,0 +1,22 @@
+{
+  "name": "mbdtf-platform",
+  "version": "1.0.0",
+  "description": "### Background",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch",
+    "postinstall": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markpassando/mbdtf-js-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/markpassando/mbdtf-js-game/issues"
+  },
+  "homepage": "https://github.com/markpassando/mbdtf-js-game#readme"
+}
