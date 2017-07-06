@@ -113,17 +113,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const gameCanvas = document.getElementById('canvas');
   let graphics = gameCanvas.getContext('2d');
-  let player = new Object("assets/spiderman.png", 450 - 52, 0, 104, 94);
+  let player = new Object("assets/mario2.png", 450 - 52, 0, 46, 78);
 
   //create blocks
   let maxBlock = 5;
   const block = new Array ();
   for (var i = 0; i < 4; i++) {
-    block[i] = new Object("assets/grass.png", i * 100, 300, 100, 100);
+    block[i] = new Object("assets/platform.png", i * 96, 400, 96, 11);
   }
 
   //far block
-  block[4] = new Object("assets/grass.png", 600, 200, 100, 100);
+  block[4] = new Object("assets/platform.png", 600, 300, 96, 11);
 
   //Events
   let isLeft = false;
