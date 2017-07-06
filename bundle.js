@@ -83,43 +83,75 @@ document.addEventListener("DOMContentLoaded", () => {
   // ctx.fillStyle = 'green';
   // ctx.fillRect(10, 350, 20, 40);
   class Object {
-    constructor(img, x, y) {
+    constructor(img, x, y, width, height) {
       this.Sprite = new Image();
       this.Sprite.src = img;
       this.X = x;
       this.Y = y;
+
+      this.width = width;
+      this.height = height;
       this.Previous_X;
       this.Previous_Y;
+
       this.Velocity_X = 0;
       this.Velocity_Y = 0;
+
+      this.gravity = 0;
+      this.weight = 0;
+
     }
 
+    isColliding(obj) {
+      if (this.X > obj.X + obj.width) return false;
+      if (this.X + this.width < obj.X) return false;
+      if (this.Y > obj.Y + obj.height) return false;
+      if (this.Y + this.height < obj.Y) return false;
+      return true;
+    }
   }
 
   const gameCanvas = document.getElementById('canvas');
   let graphics = gameCanvas.getContext('2d');
-  let player = new Object("assets/spiderman.gif", 100, 100);
+  let player = new Object("assets/spiderman.png", 450 - 52, 0, 104, 94);
 
+  //create blocks
+  let maxBlock = 5;
+  const block = new Array ();
+  for (var i = 0; i < 4; i++) {
+    block[i] = new Object("assets/grass.png", i * 100, 300, 100, 100);
+  }
 
-
+  //far block
+  block[4] = new Object("assets/grass.png", 600, 200, 100, 100);
 
   //Events
   let isLeft = false;
   let isRight = false;
+  let isJump = false;
+  player.gravity = 20;
+  player.weight = 0.1;
+
 
   document.addEventListener("keydown", (e) => {
     switch (e.keyCode) {
+    case 32:
      case 38:
+     case 87:
       //  up
+      isJump = true;
        break
      case 37:
+     case 65:
         // left
         isLeft = true;
        break
      case 40:
+     case 83:
       //  down
        break
      case 39:
+     case 68:
       //  right
        isRight = true;
        break
@@ -130,17 +162,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.addEventListener("keyup", (e) => {
     switch (e.keyCode) {
+      case 32:
      case 38:
+     case 87:
       //  up
+      isJump = false;
        break
      case 37:
+     case 65:
         // left
         isLeft = false;
        break
      case 40:
+     case 83:
       //  down
        break
      case 39:
+     case 68:
       //  right
        isRight = false;
        break
@@ -151,19 +189,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   const mainLoop = () => {
-    //Pre Variable Adjustments
-    player.X += player.Velocity_X;
+    //Pre Variable Adjustments pan screen based on char
+    for (var i = 0; i < maxBlock; i++) {
+      block[i].X += -player.Velocity_X;
+    }
+    // player.X += player.Velocity_X;
     player.Y += player.Velocity_Y;
 
     //Logic
     if (isLeft) player.Velocity_X = -3;
     if (isRight) player.Velocity_X = 3;
-    if (!isLeft && !isRight) player.Velocity_X = 0;
+    if (!isLeft && !isRight && player.Velocity_Y === 0) player.Velocity_X = 0;
+
+    // fall velocity with weight
+    if (player.Velocity_Y < player.gravity) player.Velocity_Y += player.weight;
+
+    // falling off block objects
+    for (var i = 0; i < maxBlock; i++) {
+      if (player.isColliding(block[i]) && player.Y + player.height < block[i].Y + player.Velocity_Y) {
+        player.Y = block[i].Y - player.height;
+        player.Velocity_Y = 0;
+      }
+    }
+
+    //jump logic
+    if (isJump && player.Velocity_Y === 0) {
+      player.Velocity_Y = -5;
+    }
+
     //Post Variable Adjustments
 
-    //render
+    //render blocks
     graphics.clearRect(0,0,gameCanvas.width, gameCanvas.height);
+    for (var i = 0; i < maxBlock; i++) {
+      graphics.drawImage(block[i].Sprite, block[i].X, block[i].Y);
+    }
     graphics.drawImage(player.Sprite, player.X, player.Y);
+
 
     setTimeout(mainLoop, 1000/60);
   };
