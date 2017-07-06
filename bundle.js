@@ -73,16 +73,23 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__key_events_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__level_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__level_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(6);
+
+
+
 
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
   const gameCanvas = document.getElementById('canvas');
-  let graphics = gameCanvas.getContext('2d');
+  const graphics = gameCanvas.getContext('2d');
 
+  // Create Player
   const playerCreation = {
     img: "assets/mario2.png",
     x: 375 - 23,
@@ -90,117 +97,29 @@ document.addEventListener("DOMContentLoaded", () => {
     width: 46,
     height: 78
   }
-  let player = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */](playerCreation);
+  let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);
 
+  //Create Level
+  const level = __WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */];
 
-
-  //Events
-  let isLeft = false;
-  let isRight = false;
-  let isJump = false;
-  player.gravity = 20;
-  player.weight = 0.1;
-
-// keyEvents();
-  // Jump
-  document.addEventListener("keydown", (e) => {
-    switch (e.keyCode) {
-      case 32:
-      case 38:
-      case 87:
-        //  up
-        isJump = true;
-        break
-      case 37:
-      case 65:
-      // debugger
-        // left
-        isLeft = true;
-        break
-      case 40:
-      case 83:
-        //  down
-        break
-      case 39:
-      case 68:
-        //  right
-        isRight = true;
-        break
-      default:
-        console.log('wrong key')
-    }
-  });
-
-  //Let go of jump
-  document.addEventListener("keyup", (e) => {
-    switch (e.keyCode) {
-      case 32:
-      case 38:
-        case 87:
-        //  up
-        isJump = false;
-        break
-      case 37:
-      case 65:
-        // left
-        isLeft = false;
-        break
-      case 40:
-      case 83:
-        //  down
-        break
-      case 39:
-      case 68:
-        //  right
-        isRight = false;
-        break
-      default:
-        console.log('wrong key')
-    }
-  });
-
+  //Event Handler
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */])(player);
 
   const mainLoop = () => {
-    const level = __WEBPACK_IMPORTED_MODULE_2__level_js__["a" /* default */];
     //Pre Variable Adjustments pan screen based on player
-    debugger
     for (var i = 0; i < level.maxBlock; i++) {
       level.block[i].X += -player.velocity_X;
     }
-
-    // player.X += player.velocity_X;
     player.Y += player.velocity_Y;
 
-    //Logic
-    if (isLeft) player.velocity_X = -3;
-    if (isRight) player.velocity_X = 3;
-    if (!isLeft && !isRight && player.velocity_Y === 0) player.velocity_X = 0;
-
-    // fall velocity with weight
-    if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
-
-    // falling off block objects
-    for (var i = 0; i < level.maxBlock; i++) {
-      if (player.isColliding(level.block[i]) && player.Y + player.height < level.block[i].Y + player.velocity_Y) {
-        player.Y = level.block[i].Y - player.height;
-        player.velocity_Y = 0;
-      }
-    }
-
-    //jump logic
-    if (isJump && player.velocity_Y === 0) {
-      player.velocity_Y = -4.5;
-    }
+    // Game Logic
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level);
 
     //Post Variable Adjustments
 
-    //render blocks
+    //render graphics
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    for (var i = 0; i < level.maxBlock; i++) {
-      graphics.drawImage(level.block[i].sprite, level.block[i].X, level.block[i].Y);
-    }
-    graphics.drawImage(player.sprite, player.X, player.Y);
-
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
 
     setTimeout(mainLoop, 1000/60);
   };
@@ -251,22 +170,20 @@ class Object {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const keyEvents = (isLeft, isRight, isJump) => {
-  debugger
-  // Jump
+const keyEvents = (player) => {
   document.addEventListener("keydown", (e) => {
     switch (e.keyCode) {
       case 32:
       case 38:
       case 87:
         //  up
-        isJump = true;
+        player.isJump = true;
         break
       case 37:
       case 65:
       // debugger
         // left
-        isLeft = true;
+        player.isLeft = true;
         break
       case 40:
       case 83:
@@ -275,7 +192,7 @@ const keyEvents = (isLeft, isRight, isJump) => {
       case 39:
       case 68:
         //  right
-        isRight = true;
+        player.isRight = true;
         break
       default:
         console.log('wrong key')
@@ -289,12 +206,12 @@ const keyEvents = (isLeft, isRight, isJump) => {
       case 38:
         case 87:
         //  up
-        isJump = false;
+        player.isJump = false;
         break
       case 37:
       case 65:
         // left
-        isLeft = false;
+        player.isLeft = false;
         break
       case 40:
       case 83:
@@ -303,15 +220,16 @@ const keyEvents = (isLeft, isRight, isJump) => {
       case 39:
       case 68:
         //  right
-        isRight = false;
+        player.isRight = false;
         break
       default:
         console.log('wrong key')
     }
   });
+
 }
 
-/* unused harmony default export */ var _unused_webpack_default_export = (keyEvents);
+/* harmony default export */ __webpack_exports__["a"] = (keyEvents);
 
 
 /***/ }),
@@ -353,6 +271,78 @@ levelOne.block[9] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default 
 });
 
 /* harmony default export */ __webpack_exports__["a"] = (levelOne);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const render = (graphics, level, player) => {
+  for (var i = 0; i < level.maxBlock; i++) {
+    graphics.drawImage(level.block[i].sprite, level.block[i].X, level.block[i].Y);
+  }
+  graphics.drawImage(player.sprite, player.X, player.Y);
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (render);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
+
+
+class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
+  constructor(options) {
+    super(options)
+
+    this.isLeft = false;
+    this.isRight = false;
+    this.isJump = false;
+    this.gravity = 20;
+    this.weight = 0.1;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Player);
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const logic = (player, level) => {
+  //Move Left & Right
+  if (player.isLeft) player.velocity_X = -3;
+  if (player.isRight) player.velocity_X = 3;
+
+  // Stand on Platform
+  if (!player.isLeft && !player.isRight && player.velocity_Y === 0) player.velocity_X = 0;
+
+  // Fall velocity with weight
+  if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
+
+  // Collision, Falling off block objects
+  for (var i = 0; i < level.maxBlock; i++) {
+    if (player.isColliding(level.block[i]) && player.Y + player.height < level.block[i].Y + player.velocity_Y) {
+      player.Y = level.block[i].Y - player.height;
+      player.velocity_Y = 0;
+    }
+  }
+
+  //Jump
+  if (player.isJump && player.velocity_Y === 0) {
+    player.velocity_Y = -4.5;
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (logic);
 
 
 /***/ })
