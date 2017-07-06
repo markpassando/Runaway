@@ -107,9 +107,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const mainLoop = () => {
     //Pre Variable Adjustments pan screen based on player
-    for (var i = 0; i < level.maxBlock; i++) {
-      level.block[i].X += -player.velocity_X;
-    }
+    level.blocks.forEach( block => {
+      block.X += -player.velocity_X;
+    });
+
     player.Y += player.velocity_Y;
 
     // Game Logic
@@ -133,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Object {
+class gameObject {
   constructor(options) {
     const { img, x, y, width, height } = options;
 
@@ -145,7 +146,7 @@ class Object {
     this.Y = y;
     this.previous_X;
     this.previous_Y;
-    
+
     this.velocity_X = 0;
     this.velocity_Y = 0;
     this.gravity = 0;
@@ -162,7 +163,7 @@ class Object {
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (Object);
+/* harmony default export */ __webpack_exports__["a"] = (gameObject);
 
 
 /***/ }),
@@ -238,38 +239,78 @@ const keyEvents = (player) => {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_falling_block_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_block_js__ = __webpack_require__(8);
 
 
 
 class Level {
   constructor() {
-    this.maxBlock = 15;
-    this.block = new Array ();
+    this.blocks = new Array ();
+
+    // this.blocks = this.blocks.bind(this);
+  }
+
+  numBlocks() {
+    return this.blocks.length;
+  }
+
+  platformBlocks() {
+    return this.blocks.filter(block => block.type === "platform");
+  }
+
+  fallingBlocks() {
+    return this.blocks.filter(block => block.type === "falling");
   }
 }
 
-// const generateBlock= (options) => {
-//   const { level, num, img, x, y, width, height } = options;
-//   for (var i = 0; i < array.length; i++) {
-//   }
-// }
+const generateBlock = (options) => {
+  let defaultOptions = {
+    type: "platform",
+    num: 1
+  };
+  let newOptions = Object.assign(defaultOptions, options);
+
+  const { level, num, img, x, y, width, height, type } = newOptions;
+
+  for (var i = 1; i <= num; i++) {
+    level.blocks.push(new __WEBPACK_IMPORTED_MODULE_1__objects_block_js__["a" /* default */]({
+      img: img,
+      x: x + (i * width),
+      y: y,
+      width: width,
+      height: height,
+      type: type
+    }));
+  }
+}
 
 // Create Static Level One
 const levelOne = new Level();
 
-//Initial Platform
-for (var i = 0; i < 7; i++) {
-  levelOne.block[i] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
-    img: "assets/platform.png",
-    x: i * 96,
-    y: 400,
-    width: 96,
-    height: 11
-  });
-}
+//flat stage
+generateBlock({
+  level: levelOne,
+  img: "assets/platform.png",
+  num: 6,
+  x: 96,
+  y: 400,
+  width: 96,
+  height: 11
+});
 
-levelOne.block[6] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
+//staggering
+generateBlock({
+  level: levelOne,
+  img: "assets/platform.png",
+  num: 1,
+  x: 768,
+  y: 325,
+  width: 96,
+  height: 11
+});
+
+generateBlock({
+  level: levelOne,
   img: "assets/platform.png",
   x: 768,
   y: 325,
@@ -277,7 +318,8 @@ levelOne.block[6] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default 
   height: 11
 });
 
-levelOne.block[7] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
+generateBlock({
+  level: levelOne,
   img: "assets/platform.png",
   x: 1200,
   y: 450,
@@ -285,7 +327,8 @@ levelOne.block[7] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default 
   height: 11
 });
 
-levelOne.block[8] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
+generateBlock({
+  level: levelOne,
   img: "assets/platform.png",
   x: 1460,
   y: 350,
@@ -293,7 +336,17 @@ levelOne.block[8] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default 
   height: 11
 });
 
-levelOne.block[9] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
+generateBlock({
+  level: levelOne,
+  img: "assets/platform.png",
+  x: 1460,
+  y: 350,
+  width: 96,
+  height: 11
+});
+
+generateBlock({
+  level: levelOne,
   img: "assets/platform.png",
   x: 1200,
   y: 250,
@@ -301,26 +354,38 @@ levelOne.block[9] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default 
   height: 11
 });
 
-for (var i = 10; i < 14; i++) {
-  let j = i - 10;
-  levelOne.block[i] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
-    img: "assets/platform.png",
-    x: 1460 + (j * 96),
-    y: 150,
-    width: 96,
-    height: 11
-  });
-}
-
-
-// far block
-levelOne.block[14] = new __WEBPACK_IMPORTED_MODULE_1__objects_falling_block_js__["a" /* default */]({
+//flat stage
+generateBlock({
+  level: levelOne,
   img: "assets/platform.png",
-  x: 600,
-  y: 300,
+  num: 3,
+  x: 1460,
+  y: 150,
   width: 96,
   height: 11
 });
+
+//Falling area
+generateBlock({
+  level: levelOne,
+  img: "assets/platform.png",
+  x: 2000,
+  y: 250,
+  width: 96,
+  height: 11,
+  type: "falling"
+});
+
+generateBlock({
+  level: levelOne,
+  img: "assets/platform.png",
+  x: 2300,
+  y: 250,
+  width: 96,
+  height: 11,
+  type: "falling"
+});
+
 
 /* harmony default export */ __webpack_exports__["a"] = (levelOne);
 
@@ -331,8 +396,9 @@ levelOne.block[14] = new __WEBPACK_IMPORTED_MODULE_1__objects_falling_block_js__
 
 "use strict";
 const render = (graphics, level, player) => {
-  for (var i = 0; i < level.maxBlock; i++) {
-    graphics.drawImage(level.block[i].sprite, level.block[i].X, level.block[i].Y);
+  // debugger
+  for (var i = 0; i < level.numBlocks(); i++) {
+    graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
   }
   graphics.drawImage(player.sprite, player.X, player.Y);
 }
@@ -379,15 +445,6 @@ const logic = (player, level) => {
     // player.Y = 0;
     // player.X = 375 - 23;
   }
-  // FallingBlock
-  if (player.isColliding(level.block[14]) && player.Y + player.height < level.block[14].Y + player.velocity_Y) {
-    level.block[14].gravity = 50;
-    level.block[14].weight = 1;
-    if (level.block[14].velocity_Y < level.block[14].gravity) level.block[14].velocity_Y += level.block[14].weight;
-    player.velocity_Y = 0;
-    player.canJump = true;
-  }
-  level.block[14].Y += level.block[14].velocity_Y;
 
   // Stand on Platform
   if (!player.isLeft && !player.isRight && player.velocity_Y === 0) player.velocity_X = 0;
@@ -395,13 +452,28 @@ const logic = (player, level) => {
   // Fall velocity with weight
   if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
 
-  // Collision, Falling off block objects
-  for (var i = 0; i < level.maxBlock; i++) {
-    if (player.isColliding(level.block[i]) && player.Y + player.height < level.block[i].Y + player.velocity_Y) {
-      player.Y = level.block[i].Y - player.height;
+  //Platform Collision
+  // Regular Blocks, Falling off block objects
+  const platformBlocks = level.platformBlocks();
+  platformBlocks.forEach( block => {
+    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
+      player.Y = block.Y - player.height;
       player.velocity_Y = 0;
     }
-  }
+  });
+
+  //Falling Blocks
+  const fallingBlocks = level.fallingBlocks();
+  fallingBlocks.forEach( block => {
+    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
+      block.gravity = 50;
+      block.weight = 1;
+      if (block.velocity_Y < block.gravity) block.velocity_Y += block.weight;
+      player.velocity_Y = 0;
+      player.canJump = true;
+    }
+    block.Y += block.velocity_Y;
+  });
 
   //Jump
   if (player.isJump && player.velocity_Y === 0 || player.isJump && player.canJump) {
@@ -417,20 +489,23 @@ const logic = (player, level) => {
 
 
 /***/ }),
-/* 7 */
+/* 7 */,
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
 
 
-class FallingBlock extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
+class Block extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
   constructor(options){
     super(options);
+
+    this.type = options.type;
   }
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (FallingBlock);
+/* harmony default export */ __webpack_exports__["a"] = (Block);
 
 
 /***/ })
