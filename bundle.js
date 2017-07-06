@@ -68,62 +68,31 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// import Game from './game.js'
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__key_events_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__level_js__ = __webpack_require__(3);
+
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
-  // const gameCanvas = document.getElementById('canvas');
-  // gameCanvas.width = Game.DIM_X;
-  // gameCanvas.height = Game.DIM_Y;
-  //
-  // const ctx = gameCanvas.getContext('2d');
-  // const game = new Game();
-  // new GameView(game, ctx).start();
-  // ctx.fillStyle = 'green';
-  // ctx.fillRect(10, 350, 20, 40);
-  class Object {
-    constructor(img, x, y, width, height) {
-      this.Sprite = new Image();
-      this.Sprite.src = img;
-      this.X = x;
-      this.Y = y;
-
-      this.width = width;
-      this.height = height;
-      this.Previous_X;
-      this.Previous_Y;
-
-      this.Velocity_X = 0;
-      this.Velocity_Y = 0;
-
-      this.gravity = 0;
-      this.weight = 0;
-
-    }
-
-    isColliding(obj) {
-      if (this.X > obj.X + obj.width) return false;
-      if (this.X + this.width < obj.X) return false;
-      if (this.Y > obj.Y + obj.height) return false;
-      if (this.Y + this.height < obj.Y) return false;
-      return true;
-    }
-  }
-
   const gameCanvas = document.getElementById('canvas');
   let graphics = gameCanvas.getContext('2d');
-  let player = new Object("assets/mario2.png", 450 - 52, 0, 46, 78);
 
-  //create blocks
-  let maxBlock = 5;
-  const block = new Array ();
-  for (var i = 0; i < 4; i++) {
-    block[i] = new Object("assets/platform.png", i * 96, 400, 96, 11);
+  const playerCreation = {
+    img: "assets/mario2.png",
+    x: 375 - 23,
+    y: 0,
+    width: 46,
+    height: 78
   }
+  let player = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */](playerCreation);
 
-  //far block
-  block[4] = new Object("assets/platform.png", 600, 300, 96, 11);
+
 
   //Events
   let isLeft = false;
@@ -132,99 +101,105 @@ document.addEventListener("DOMContentLoaded", () => {
   player.gravity = 20;
   player.weight = 0.1;
 
-
+// keyEvents();
+  // Jump
   document.addEventListener("keydown", (e) => {
     switch (e.keyCode) {
-    case 32:
-     case 38:
-     case 87:
-      //  up
-      isJump = true;
-       break
-     case 37:
-     case 65:
+      case 32:
+      case 38:
+      case 87:
+        //  up
+        isJump = true;
+        break
+      case 37:
+      case 65:
+      // debugger
         // left
         isLeft = true;
-       break
-     case 40:
-     case 83:
-      //  down
-       break
-     case 39:
-     case 68:
-      //  right
-       isRight = true;
-       break
-     default:
-       console.log('wrong key')
+        break
+      case 40:
+      case 83:
+        //  down
+        break
+      case 39:
+      case 68:
+        //  right
+        isRight = true;
+        break
+      default:
+        console.log('wrong key')
     }
   });
 
+  //Let go of jump
   document.addEventListener("keyup", (e) => {
     switch (e.keyCode) {
       case 32:
-     case 38:
-     case 87:
-      //  up
-      isJump = false;
-       break
-     case 37:
-     case 65:
+      case 38:
+        case 87:
+        //  up
+        isJump = false;
+        break
+      case 37:
+      case 65:
         // left
         isLeft = false;
-       break
-     case 40:
-     case 83:
-      //  down
-       break
-     case 39:
-     case 68:
-      //  right
-       isRight = false;
-       break
-     default:
-       console.log('wrong key')
+        break
+      case 40:
+      case 83:
+        //  down
+        break
+      case 39:
+      case 68:
+        //  right
+        isRight = false;
+        break
+      default:
+        console.log('wrong key')
     }
   });
 
 
   const mainLoop = () => {
-    //Pre Variable Adjustments pan screen based on char
-    for (var i = 0; i < maxBlock; i++) {
-      block[i].X += -player.Velocity_X;
+    const level = __WEBPACK_IMPORTED_MODULE_2__level_js__["a" /* default */];
+    //Pre Variable Adjustments pan screen based on player
+    debugger
+    for (var i = 0; i < level.maxBlock; i++) {
+      level.block[i].X += -player.velocity_X;
     }
-    // player.X += player.Velocity_X;
-    player.Y += player.Velocity_Y;
+
+    // player.X += player.velocity_X;
+    player.Y += player.velocity_Y;
 
     //Logic
-    if (isLeft) player.Velocity_X = -3;
-    if (isRight) player.Velocity_X = 3;
-    if (!isLeft && !isRight && player.Velocity_Y === 0) player.Velocity_X = 0;
+    if (isLeft) player.velocity_X = -3;
+    if (isRight) player.velocity_X = 3;
+    if (!isLeft && !isRight && player.velocity_Y === 0) player.velocity_X = 0;
 
     // fall velocity with weight
-    if (player.Velocity_Y < player.gravity) player.Velocity_Y += player.weight;
+    if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
 
     // falling off block objects
-    for (var i = 0; i < maxBlock; i++) {
-      if (player.isColliding(block[i]) && player.Y + player.height < block[i].Y + player.Velocity_Y) {
-        player.Y = block[i].Y - player.height;
-        player.Velocity_Y = 0;
+    for (var i = 0; i < level.maxBlock; i++) {
+      if (player.isColliding(level.block[i]) && player.Y + player.height < level.block[i].Y + player.velocity_Y) {
+        player.Y = level.block[i].Y - player.height;
+        player.velocity_Y = 0;
       }
     }
 
     //jump logic
-    if (isJump && player.Velocity_Y === 0) {
-      player.Velocity_Y = -5;
+    if (isJump && player.velocity_Y === 0) {
+      player.velocity_Y = -4.5;
     }
 
     //Post Variable Adjustments
 
     //render blocks
-    graphics.clearRect(0,0,gameCanvas.width, gameCanvas.height);
-    for (var i = 0; i < maxBlock; i++) {
-      graphics.drawImage(block[i].Sprite, block[i].X, block[i].Y);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    for (var i = 0; i < level.maxBlock; i++) {
+      graphics.drawImage(level.block[i].sprite, level.block[i].X, level.block[i].Y);
     }
-    graphics.drawImage(player.Sprite, player.X, player.Y);
+    graphics.drawImage(player.sprite, player.X, player.Y);
 
 
     setTimeout(mainLoop, 1000/60);
@@ -232,6 +207,152 @@ document.addEventListener("DOMContentLoaded", () => {
   mainLoop();
 
 });
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Object {
+  constructor(options) {
+    const { img, x, y, width, height } = options;
+
+    this.sprite = new Image();
+    this.sprite.src = img;
+    this.width = width;
+    this.height = height;
+    this.X = x;
+    this.Y = y;
+    this.previous_X;
+    this.previous_Y;
+    
+    this.velocity_X = 0;
+    this.velocity_Y = 0;
+    this.gravity = 0;
+    this.weight = 0;
+
+  }
+
+  isColliding(obj) {
+    if (this.X > obj.X + obj.width) return false;
+    if (this.X + this.width < obj.X) return false;
+    if (this.Y > obj.Y + obj.height) return false;
+    if (this.Y + this.height < obj.Y) return false;
+    return true;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Object);
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const keyEvents = (isLeft, isRight, isJump) => {
+  debugger
+  // Jump
+  document.addEventListener("keydown", (e) => {
+    switch (e.keyCode) {
+      case 32:
+      case 38:
+      case 87:
+        //  up
+        isJump = true;
+        break
+      case 37:
+      case 65:
+      // debugger
+        // left
+        isLeft = true;
+        break
+      case 40:
+      case 83:
+        //  down
+        break
+      case 39:
+      case 68:
+        //  right
+        isRight = true;
+        break
+      default:
+        console.log('wrong key')
+    }
+  });
+
+  //Let go of jump
+  document.addEventListener("keyup", (e) => {
+    switch (e.keyCode) {
+      case 32:
+      case 38:
+        case 87:
+        //  up
+        isJump = false;
+        break
+      case 37:
+      case 65:
+        // left
+        isLeft = false;
+        break
+      case 40:
+      case 83:
+        //  down
+        break
+      case 39:
+      case 68:
+        //  right
+        isRight = false;
+        break
+      default:
+        console.log('wrong key')
+    }
+  });
+}
+
+/* unused harmony default export */ var _unused_webpack_default_export = (keyEvents);
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
+
+
+class Level {
+  constructor() {
+    this.maxBlock = 10;
+    this.block = new Array ();
+  }
+}
+
+// Create Static Level One
+const levelOne = new Level();
+
+//Initial Platform
+for (var i = 0; i < 9; i++) {
+  levelOne.block[i] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
+    img: "assets/platform.png",
+    x: i * 96,
+    y: 400,
+    width: 96,
+    height: 11
+  });
+}
+
+//far block
+levelOne.block[9] = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]({
+  img: "assets/platform.png",
+  x: 600,
+  y: 300,
+  width: 96,
+  height: 11
+});
+
+/* harmony default export */ __webpack_exports__["a"] = (levelOne);
 
 
 /***/ })
