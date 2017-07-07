@@ -198,31 +198,53 @@ class Level {
   fallingBlocks() {
     return this.blocks.filter(block => block.type === "falling");
   }
+
+  springBlocks() {
+    return this.blocks.filter(block => block.type === "spring");
+  }
 }
 
 const generateBlock = (options) => {
   let defaultOptions = {
     type: "platform",
-    num: 1
+    num: 1,
+    space: null
   };
   let newOptions = Object.assign(defaultOptions, options);
 
-  const { level, num, img, x, y, width, height, type } = newOptions;
+  const { level, num, img, x, y, width, height, type, space } = newOptions;
 
+  let totalWidth = 0;
   for (var i = 1; i <= num; i++) {
     level.blocks.push(new __WEBPACK_IMPORTED_MODULE_1__objects_block_js__["a" /* default */]({
       img: img,
-      x: x + (i * width),
+      x: x + (totalWidth),
       y: y,
       width: width,
       height: height,
       type: type
     }));
+
+    totalWidth += width + space
   }
 }
 
 // Create Static Level One
 const levelOne = new Level();
+
+generateBlock({
+  level: levelOne,
+  img: "assets/spring.png",
+  num: 1,
+  x: 168,
+  y: 325,
+  width: 60,
+  height: 78,
+  type: "spring",
+  num: 3,
+  space: 200
+});
+
 
 //flat stage
 generateBlock({
@@ -306,32 +328,45 @@ generateBlock({
 generateBlock({
   level: levelOne,
   img: "assets/falling-platform.png",
+  num: 1,
   x: 2000,
   y: 250,
   width: 96,
   height: 11,
-  type: "falling"
+  type: "falling",
+  space: 270,
+  num: 3
 });
 
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  x: 2300,
-  y: 250,
-  width: 96,
-  height: 11,
-  type: "falling"
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  x: 2675,
-  y: 250,
-  width: 96,
-  height: 11,
-  type: "falling"
-});
+// generateBlock({
+//   level: levelOne,
+//   img: "assets/falling-platform.png",
+//   x: 2000,
+//   y: 250,
+//   width: 96,
+//   height: 11,
+//   type: "falling",
+// });
+//
+// generateBlock({
+//   level: levelOne,
+//   img: "assets/falling-platform.png",
+//   x: 2300,
+//   y: 250,
+//   width: 96,
+//   height: 11,
+//   type: "falling"
+// });
+//
+// generateBlock({
+//   level: levelOne,
+//   img: "assets/falling-platform.png",
+//   x: 2675,
+//   y: 250,
+//   width: 96,
+//   height: 11,
+//   type: "falling"
+// });
 
 
 /* harmony default export */ __webpack_exports__["a"] = (levelOne);
@@ -387,12 +422,27 @@ const logic = (player, level) => {
     block.Y += block.velocity_Y;
   });
 
+  //Spring Blocks
+  const springBlocks = level.springBlocks();
+  springBlocks.forEach( block => {
+    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
+      player.Y = block.Y - player.height;
+      player.velocity_Y = 0;
+      player.springJump = true;
+    }
+  });
+
   //Jump
   if (player.isJump && player.velocity_Y === 0 || player.isJump && player.canJump) {
     player.velocity_Y = -4.5;
     player.canJump = false;
   }
 
+  //Spring Jump
+  if (player.springJump) {
+    player.velocity_Y = -7;
+    player.springJump = false;
+  }
 
 
 }
@@ -416,8 +466,9 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
     this.isRight = false;
     this.isJump = false;
     this.canJump = false;
-    this.gravity = 20;
-    this.weight = 0.1;
+    this.springJump = false;
+    this.gravity = 100000;
+    this.weight = 0.12;
     this.distance = 0;
   }
 }
@@ -434,15 +485,15 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
 
 
 const render = (graphics, level, player) => {
-  const kanyeCreation = {
-    img: "assets/nightmare-kanye.png",
-    x: 700,
-    y: 350,
-    width: 49,
-    height: 47
-  }
-  let kanye = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */](kanyeCreation);
-  graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
+  // const kanyeCreation = {
+  //   img: "assets/nightmare-kanye.png",
+  //   x: 700,
+  //   y: 350,
+  //   width: 49,
+  //   height: 47
+  // }
+  // let kanye = new gameObject(kanyeCreation);
+  // graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
 
 
   // debugger
