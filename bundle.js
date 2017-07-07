@@ -63,74 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__level_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(6);
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const gameCanvas = document.getElementById('canvas');
-  const graphics = gameCanvas.getContext('2d');
-
-  // Create Player
-  const playerCreation = {
-    img: "assets/mario2.png",
-    x: 375 - 23,
-    y: 0,
-    width: 46,
-    height: 78
-  }
-  let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);
-
-  //Create Level
-  const level = __WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */];
-
-  //Event Handler
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */])(player);
-
-  const mainLoop = () => {
-    //Pre Variable Adjustments pan screen based on player
-    level.blocks.forEach( block => {
-      block.X += -player.velocity_X;
-    });
-
-    player.Y += player.velocity_Y;
-
-    // Game Logic
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level);
-
-    //Post Variable Adjustments
-
-    //render graphics
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
-
-    setTimeout(mainLoop, 1000/60);
-  };
-  mainLoop();
-
-});
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -167,7 +104,7 @@ class gameObject {
 
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -234,12 +171,12 @@ const keyEvents = (player) => {
 
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_block_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_block_js__ = __webpack_require__(7);
 
 
 
@@ -368,7 +305,7 @@ generateBlock({
 //Falling area
 generateBlock({
   level: levelOne,
-  img: "assets/platform.png",
+  img: "assets/falling-platform.png",
   x: 2000,
   y: 250,
   width: 96,
@@ -378,8 +315,18 @@ generateBlock({
 
 generateBlock({
   level: levelOne,
-  img: "assets/platform.png",
+  img: "assets/falling-platform.png",
   x: 2300,
+  y: 250,
+  width: 96,
+  height: 11,
+  type: "falling"
+});
+
+generateBlock({
+  level: levelOne,
+  img: "assets/falling-platform.png",
+  x: 2675,
   y: 250,
   width: 96,
   height: 11,
@@ -391,47 +338,7 @@ generateBlock({
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-const render = (graphics, level, player) => {
-  // debugger
-  for (var i = 0; i < level.numBlocks(); i++) {
-    graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-  }
-  graphics.drawImage(player.sprite, player.X, player.Y);
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (render);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
-
-
-class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
-  constructor(options) {
-    super(options);
-
-    this.isLeft = false;
-    this.isRight = false;
-    this.isJump = false;
-    this.canJump = false;
-    this.gravity = 20;
-    this.weight = 0.1;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Player);
-
-
-/***/ }),
-/* 6 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -439,9 +346,14 @@ const logic = (player, level) => {
   //Move Left & Right
   if (player.isLeft) player.velocity_X = -3;
   if (player.isRight) player.velocity_X = 3;
+  player.distance += player.velocity_X;
+  console.log(player.distance);
 
+  // Player Death
   if (player.Y > 500) {
+    document.body.className = 'death';
     console.log("you lose");
+    // graphics.setTransform()
     // player.Y = 0;
     // player.X = 375 - 23;
   }
@@ -489,12 +401,131 @@ const logic = (player, level) => {
 
 
 /***/ }),
-/* 7 */,
-/* 8 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
+
+
+class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
+  constructor(options) {
+    super(options);
+
+    this.isLeft = false;
+    this.isRight = false;
+    this.isJump = false;
+    this.canJump = false;
+    this.gravity = 20;
+    this.weight = 0.1;
+    this.distance = 0;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Player);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
+
+
+const render = (graphics, level, player) => {
+  const kanyeCreation = {
+    img: "assets/nightmare-kanye.png",
+    x: 700,
+    y: 350,
+    width: 49,
+    height: 47
+  }
+  let kanye = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */](kanyeCreation);
+  graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
+
+
+  // debugger
+  for (var i = 0; i < level.numBlocks(); i++) {
+    graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
+  }
+  graphics.drawImage(player.sprite, player.X, player.Y);
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (render);
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__level_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const gameCanvas = document.getElementById('canvas');
+  const graphics = gameCanvas.getContext('2d');
+
+  // Create Player
+  const playerCreation = {
+    img: "assets/mario2.png",
+    x: 220,
+    y: 0,
+    width: 46,
+    height: 76
+  }
+  let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);
+
+  //Create Level
+  const level = __WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */];
+
+  //Event Handler
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */])(player);
+
+  const mainLoop = () => {
+    //Pre Variable Adjustments pan screen based on player
+    level.blocks.forEach( block => {
+      block.X += -player.velocity_X;
+    });
+
+    player.Y += player.velocity_Y;
+
+    // Game Logic
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level);
+
+    //Post Variable Adjustments
+
+    //render graphics
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
+
+    // clear timeout
+    setTimeout(mainLoop, 1000/60);
+  };
+  mainLoop();
+
+});
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
 
 
 class Block extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
