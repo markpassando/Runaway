@@ -382,7 +382,7 @@ const logic = (player, level) => {
   if (player.isLeft) player.velocity_X = -3;
   if (player.isRight) player.velocity_X = 3;
   player.distance += player.velocity_X;
-  console.log(player.distance);
+  // console.log(player.distance);
 
   // Player Death
   if (player.Y > 500) {
@@ -470,6 +470,37 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
     this.gravity = 100000;
     this.weight = 0.12;
     this.distance = 0;
+
+    this.spriteAnimCounter = 0;
+  }
+
+  draw(graphics) {
+    // 1875
+    // 1250
+    // 47, 76,
+    const frameWidth = 1875/15;
+    const frameHeight = 1250/10;
+    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
+
+    let actionStatus = 0;
+    let frameStatus = 0;
+    if (this.velocity_X === 0) {
+      //standing
+      actionStatus = 0;
+      frameStatus = 0;
+    } else if (this.velocity_X !== 0) {
+      actionStatus = 125;
+      frameStatus = walkingMod;
+    }
+
+    graphics.drawImage(this.sprite,
+      frameStatus * frameWidth, actionStatus,
+      frameWidth, frameHeight,
+      this.X - 40, this.Y,
+      125, 125
+    );
+    // point on image
+    //
   }
 }
 
@@ -500,7 +531,11 @@ const render = (graphics, level, player) => {
   for (var i = 0; i < level.numBlocks(); i++) {
     graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
   }
-  graphics.drawImage(player.sprite, player.X, player.Y);
+  // graphics.drawImage(player.sprite, player.X, player.Y);
+  if (player.velocity_X !== 0) player.spriteAnimCounter += .2;
+  player.draw(graphics);
+
+
 
 }
 
@@ -532,12 +567,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Create Player
   const playerCreation = {
-    img: "assets/mario2.png",
+    img: "assets/grid-sprite.png",
     x: 220,
     y: 0,
     width: 46,
-    height: 76
+    height: 90
   }
+  // height: 76 old height
   let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);
 
   //Create Level
