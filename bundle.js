@@ -109,33 +109,11 @@ class gameObject {
 
 "use strict";
 const keyEvents = (player) => {
-  document.addEventListener("keydown", (e) => {
-    switch (e.keyCode) {
-      case 32:
-      case 38:
-      case 87:
-        //  up
-        player.isJump = true;
-        break
-      case 37:
-      case 65:
-      // debugger
-        // left
-        player.isLeft = true;
-        break
-      case 40:
-      case 83:
-        //  down
-        break
-      case 39:
-      case 68:
-        //  right
-        player.isRight = true;
-        break
-      default:
-        console.log('wrong key')
-    }
-  });
+  function removeEvents() {
+    document.removeEventListener("keydown", keyDownEvents, true);
+  }
+
+  document.addEventListener("keydown", keyDownEvents, true );
 
   //Let go of jump
   document.addEventListener("keyup", (e) => {
@@ -165,6 +143,34 @@ const keyEvents = (player) => {
     }
   });
 
+  function keyDownEvents(e) {
+      switch (e.keyCode) {
+        case 32:
+        case 38:
+        case 87:
+          //  up
+          player.isJump = true;
+          break
+        case 37:
+        case 65:
+        // debugger
+          // left
+          player.isLeft = true;
+          break
+        case 40:
+        case 83:
+          //  down
+          break
+        case 39:
+        case 68:
+          //  right
+          player.isRight = true;
+          break
+        default:
+          console.log('wrong key')
+      }
+  }
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (keyEvents);
@@ -185,6 +191,10 @@ class Level {
     this.blocks = new Array ();
 
     // this.blocks = this.blocks.bind(this);
+  }
+
+  clear() {
+    return this.blocks = [];
   }
 
   numBlocks() {
@@ -345,6 +355,9 @@ generateBlock({
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__level_js__ = __webpack_require__(2);
+
+
 const logic = (player, level) => {
   //Move Left & Right
   if (player.isLeft) player.velocity_X = -3;
@@ -357,8 +370,11 @@ const logic = (player, level) => {
     document.body.className = 'death';
     console.log("you lose");
     // graphics.setTransform()
-    // player.Y = 0;
-    // player.X = 375 - 23;
+    player.Y = 0;
+    player.X = 375 - 23;
+    // debugger
+    level.clear();
+    debugger
   }
 
   // Stand on Platform
@@ -502,15 +518,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
 
 
 const render = (graphics, level, player) => {
-  // const kanyeCreation = {
-  //   img: "assets/nightmare-kanye.png",
-  //   x: 700,
-  //   y: 350,
-  //   width: 49,
-  //   height: 47
-  // }
-  // let kanye = new gameObject(kanyeCreation);
-  // graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
+  
 
 
   // debugger
@@ -567,16 +575,75 @@ document.addEventListener("DOMContentLoaded", () => {
   //Create Level
   const level = __WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */];
 
+  function splashControls() {
+    document.removeEventListener("click", splashControls, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-controls.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+
+    document.addEventListener("click", splashIntro, true);
+  }
+
+  function splashIntro() {
+    document.removeEventListener("click", splashIntro, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-crying-kim.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+    setTimeout(mainLoop, 2000);
+    // document.addEventListener("click", mainLoop, true);
+  }
   //Event Handler
   __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */])(player);
+  const welcome = () => {
+    let base_image = new Image();
+    base_image.src = 'assets/start-game.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+
+    document.addEventListener("click", splashControls, true);
+
+  }
+
+  const ending = () => {
+    let base_image = new Image();
+    base_image.src = 'assets/crying-kim.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 100, 100);
+    }
+    __WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */].removeEvents();
+  }
+
+  const kanyeCreation = {
+    img: "assets/nightmare-kanye.png",
+    x: 600,
+    y: 350,
+    width: 49,
+    height: 47
+  }
+  let kanye = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */](kanyeCreation);
 
   const mainLoop = () => {
+    document.removeEventListener("click", mainLoop, true);
     //Pre Variable Adjustments pan screen based on player
+    kanye.X += -player.velocity_X;
     level.blocks.forEach( block => {
       block.X += -player.velocity_X;
     });
 
     player.Y += player.velocity_Y;
+
+    if (player.isColliding(kanye)) {
+      ending();
+    }
+
+
 
     // Game Logic
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level);
@@ -585,12 +652,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //render graphics
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+
+
+    graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
+
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
 
     // clear timeout
     setTimeout(mainLoop, 1000/60);
   };
-  mainLoop();
+  welcome();
+  // mainLoop();
 
 });
 
