@@ -231,21 +231,6 @@ const generateBlock = (options) => {
 
 // Create Static Level One
 const levelOne = new Level();
-
-generateBlock({
-  level: levelOne,
-  img: "assets/spring.png",
-  num: 1,
-  x: 168,
-  y: 325,
-  width: 60,
-  height: 78,
-  type: "spring",
-  num: 3,
-  space: 200
-});
-
-
 //flat stage
 generateBlock({
   level: levelOne,
@@ -338,35 +323,18 @@ generateBlock({
   num: 3
 });
 
-// generateBlock({
-//   level: levelOne,
-//   img: "assets/falling-platform.png",
-//   x: 2000,
-//   y: 250,
-//   width: 96,
-//   height: 11,
-//   type: "falling",
-// });
-//
-// generateBlock({
-//   level: levelOne,
-//   img: "assets/falling-platform.png",
-//   x: 2300,
-//   y: 250,
-//   width: 96,
-//   height: 11,
-//   type: "falling"
-// });
-//
-// generateBlock({
-//   level: levelOne,
-//   img: "assets/falling-platform.png",
-//   x: 2675,
-//   y: 250,
-//   width: 96,
-//   height: 11,
-//   type: "falling"
-// });
+generateBlock({
+  level: levelOne,
+  img: "assets/spring.png",
+  num: 1,
+  x: 3100,
+  y: 420,
+  width: 60,
+  height: 78,
+  type: "spring",
+  num: 3,
+  space: 400
+});
 
 
 /* harmony default export */ __webpack_exports__["a"] = (levelOne);
@@ -468,7 +436,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
     this.canJump = false;
     this.springJump = false;
     this.gravity = 100000;
-    this.weight = 0.12;
+    this.weight = 0.1;
     this.distance = 0;
 
     this.spriteAnimCounter = 0;
@@ -481,27 +449,45 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
     const frameWidth = 1875/15;
     const frameHeight = 1250/10;
     let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
+    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
 
     let actionStatus = 0;
     let frameStatus = 0;
-    if (this.velocity_X === 0) {
-      //standing
+    if (this.velocity_X === 0 && this.velocity_Y === 0) {
+      // standing
       actionStatus = 0;
       frameStatus = 0;
+      // frameStatus = standingMod;
+    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
+      // jumping
+      actionStatus = 250;
+      frameStatus = 0;
     } else if (this.velocity_X !== 0) {
+      // walking
       actionStatus = 125;
       frameStatus = walkingMod;
+    }
+
+    // Rotate sprites if going left
+    let playerXCoord = this.X - 43;
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+      playerXCoord = -playerXCoord - 125;
     }
 
     graphics.drawImage(this.sprite,
       frameStatus * frameWidth, actionStatus,
       frameWidth, frameHeight,
-      this.X - 40, this.Y,
+      playerXCoord, this.Y,
       125, 125
     );
-    // point on image
-    //
+
+    // Rotate sprites back
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+    }
   }
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Player);
@@ -532,10 +518,12 @@ const render = (graphics, level, player) => {
     graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
   }
   // graphics.drawImage(player.sprite, player.X, player.Y);
-  if (player.velocity_X !== 0) player.spriteAnimCounter += .2;
+  if (this.velocity_X === 0 && this.velocity_Y === 0) {
+
+  } else if (player.velocity_X !== 0) {
+    player.spriteAnimCounter += .2;
+  }
   player.draw(graphics);
-
-
 
 }
 
@@ -571,7 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
     x: 220,
     y: 0,
     width: 46,
-    height: 90
+    height: 94
   }
   // height: 76 old height
   let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);

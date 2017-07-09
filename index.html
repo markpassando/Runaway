@@ -8,6 +8,15 @@
   </head>
   <body>
   <h1>Runaway</h1>
+  <audio controls loop autoplay id="myaudio">
+    <source src="assets/runaway.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    let audio = document.getElementById("myaudio");
+    audio.volume = 0.4;
+  </script>
   <canvas id="canvas" width="900" height="500"></canvas>
   </body>
 </html>
