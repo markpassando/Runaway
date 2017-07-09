@@ -108,79 +108,6 @@ class gameObject {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const keyEvents = (player) => {
-  function removeEvents() {
-    document.removeEventListener("keydown", keyDownEvents, true);
-  }
-
-  document.addEventListener("keydown", keyDownEvents, true );
-
-  //Let go of jump
-  document.addEventListener("keyup", (e) => {
-    switch (e.keyCode) {
-      case 32:
-      case 38:
-        case 87:
-        //  up
-        player.isJump = false;
-        break
-      case 37:
-      case 65:
-        // left
-        player.isLeft = false;
-        break
-      case 40:
-      case 83:
-        //  down
-        break
-      case 39:
-      case 68:
-        //  right
-        player.isRight = false;
-        break
-      default:
-        console.log('wrong key')
-    }
-  });
-
-  function keyDownEvents(e) {
-      switch (e.keyCode) {
-        case 32:
-        case 38:
-        case 87:
-          //  up
-          player.isJump = true;
-          break
-        case 37:
-        case 65:
-        // debugger
-          // left
-          player.isLeft = true;
-          break
-        case 40:
-        case 83:
-          //  down
-          break
-        case 39:
-        case 68:
-          //  right
-          player.isRight = true;
-          break
-        default:
-          console.log('wrong key')
-      }
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (keyEvents);
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_block_js__ = __webpack_require__(7);
 
@@ -351,11 +278,84 @@ generateBlock({
 
 
 /***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const keyEvents = (player) => {
+  function removeEvents() {
+    document.removeEventListener("keydown", keyDownEvents, true);
+  }
+
+  document.addEventListener("keydown", keyDownEvents, true );
+
+  //Let go of jump
+  document.addEventListener("keyup", (e) => {
+    switch (e.keyCode) {
+      case 32:
+      case 38:
+        case 87:
+        //  up
+        player.isJump = false;
+        break
+      case 37:
+      case 65:
+        // left
+        player.isLeft = false;
+        break
+      case 40:
+      case 83:
+        //  down
+        break
+      case 39:
+      case 68:
+        //  right
+        player.isRight = false;
+        break
+      default:
+        console.log('wrong key')
+    }
+  });
+
+  function keyDownEvents(e) {
+      switch (e.keyCode) {
+        case 32:
+        case 38:
+        case 87:
+          //  up
+          player.isJump = true;
+          break
+        case 37:
+        case 65:
+        // debugger
+          // left
+          player.isLeft = true;
+          break
+        case 40:
+        case 83:
+          //  down
+          break
+        case 39:
+        case 68:
+          //  right
+          player.isRight = true;
+          break
+        default:
+          console.log('wrong key')
+      }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (keyEvents);
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__level_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__level_js__ = __webpack_require__(1);
 
 
 const logic = (player, level) => {
@@ -546,8 +546,8 @@ const render = (graphics, level, player) => {
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__level_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__level_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
 
@@ -558,6 +558,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  // const thanksWill = new Audio('assets/runaway.mp3');
+  // thanksWill.volume = .5;
+  // if (typeof thanksWill.loop == 'boolean')
+  // {
+  //     thanksWill.loop = true;
+  // }
+  // else
+  // {
+  //     thanksWill.addEventListener('ended', function() {
+  //         this.currentTime = 0;
+  //         this.play();
+  //     }, false);
+  // }
+  // thanksWill.play();
+
+
   const gameCanvas = document.getElementById('canvas');
   const graphics = gameCanvas.getContext('2d');
 
@@ -576,7 +592,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const level = __WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */];
 
   function splashControls() {
-    document.removeEventListener("click", splashControls, true);
+    gameCanvas.removeEventListener("click", splashControls, true);
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
     let base_image = new Image();
     base_image.src = 'assets/splash-controls.jpg';
@@ -584,11 +600,11 @@ document.addEventListener("DOMContentLoaded", () => {
       graphics.drawImage(base_image, 0, 0);
     }
 
-    document.addEventListener("click", splashIntro, true);
+    gameCanvas.addEventListener("click", splashIntro, true);
   }
 
   function splashIntro() {
-    document.removeEventListener("click", splashIntro, true);
+    gameCanvas.removeEventListener("click", splashIntro, true);
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
     let base_image = new Image();
     base_image.src = 'assets/splash-crying-kim.jpg';
@@ -607,15 +623,15 @@ document.addEventListener("DOMContentLoaded", () => {
       graphics.drawImage(base_image, 0, 0);
     }
 
-    document.addEventListener("click", splashControls, true);
+    gameCanvas.addEventListener("click", splashControls, true);
 
   }
 
   const ending = () => {
     let base_image = new Image();
-    base_image.src = 'assets/crying-kim.jpg';
+    base_image.src = 'assets/splash-ending.jpg';
     base_image.onload = function(){
-      graphics.drawImage(base_image, 100, 100);
+      graphics.drawImage(base_image, 0, 0);
     }
     __WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */].removeEvents();
   }
