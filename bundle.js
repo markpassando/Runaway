@@ -167,114 +167,193 @@ const generateBlock = (options) => {
 }
 
 // Create Static Level One
-const levelOne = new Level();
-//flat stage
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  num: 6,
-  x: 96,
-  y: 400,
-  width: 96,
-  height: 11
-});
-
-//staggering
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  num: 1,
-  x: 768,
-  y: 325,
-  width: 96,
-  height: 11
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  x: 768,
-  y: 325,
-  width: 96,
-  height: 11
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  x: 1200,
-  y: 450,
-  width: 96,
-  height: 11
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  x: 1460,
-  y: 350,
-  width: 96,
-  height: 11
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  x: 1460,
-  y: 350,
-  width: 96,
-  height: 11
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  x: 1200,
-  y: 250,
-  width: 96,
-  height: 11
-});
-
-//flat stage
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  num: 3,
-  x: 1460,
-  y: 150,
-  width: 96,
-  height: 11
-});
-
-//Falling area
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  num: 1,
-  x: 2000,
-  y: 250,
-  width: 96,
-  height: 11,
-  type: "falling",
-  space: 270,
-  num: 3
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/spring.png",
-  num: 1,
-  x: 3100,
-  y: 420,
-  width: 60,
-  height: 78,
-  type: "spring",
-  num: 3,
-  space: 400
-});
 
 
-/* harmony default export */ __webpack_exports__["a"] = (levelOne);
+const generateLevelOne = () => {
+  const levelOne = new Level();
+  //flat stage
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    num: 6,
+    x: 96,
+    y: 400,
+    width: 96,
+    height: 11
+  });
+
+  //staggering
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    num: 1,
+    x: 768,
+    y: 325,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 768,
+    y: 325,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 1200,
+    y: 450,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 1460,
+    y: 350,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 1460,
+    y: 350,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 1200,
+    y: 250,
+    width: 96,
+    height: 11
+  });
+
+  //flat stage
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    num: 3,
+    x: 1460,
+    y: 150,
+    width: 96,
+    height: 11
+  });
+
+  //Falling area
+  generateBlock({
+    level: levelOne,
+    img: "assets/falling-platform.png",
+    num: 1,
+    x: 2000,
+    y: 250,
+    width: 96,
+    height: 11,
+    type: "falling",
+    space: 270,
+    num: 3
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/spring.png",
+    x: 3090,
+    y: 420,
+    width: 60,
+    height: 78,
+    type: "spring",
+    num: 3,
+    space: 390
+  });
+
+  // after spring
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 4200,
+    y: 480,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    x: 4400,
+    y: 480,
+    width: 96,
+    height: 11
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/spring.png",
+    x: 4600,
+    y: 420,
+    width: 60,
+    height: 78,
+    type: "spring",
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/falling-platform.png",
+    num: 1,
+    x: 4900,
+    y: 350,
+    width: 96,
+    height: 11,
+    type: "falling",
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/falling-platform.png",
+    num: 1,
+    x: 5100,
+    y: 300,
+    width: 96,
+    height: 11,
+    type: "falling",
+  });
+
+  generateBlock({
+    level: levelOne,
+    img: "assets/falling-platform.png",
+    num: 1,
+    x: 5400,
+    y: 250,
+    width: 96,
+    height: 11,
+    type: "falling",
+  });
+
+  //flat stage
+  generateBlock({
+    level: levelOne,
+    img: "assets/platform.png",
+    num: 10,
+    x: 5600,
+    y: 400,
+    width: 96,
+    height: 11
+  });
+// debugger
+  return levelOne;
+}
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (generateLevelOne);
 
 
 /***/ }),
@@ -288,9 +367,9 @@ const keyEvents = (player) => {
   //Let go of jump
   document.addEventListener("keyup", (e) => {
     switch (e.keyCode) {
-      case 32:
-      case 38:
-        case 87:
+        case 32:
+        // case 38:
+        // case 87:
         //  up
         player.isJump = false;
         break
@@ -316,8 +395,8 @@ const keyEvents = (player) => {
   function keyDownEvents(e) {
       switch (e.keyCode) {
         case 32:
-        case 38:
-        case 87:
+        // case 38:
+        // case 87:
           //  up
           player.isJump = true;
           break
@@ -336,87 +415,12 @@ const keyEvents = (player) => {
           //  right
           player.isRight = true;
           break
-        default:
-          console.log('wrong key')
       }
   }
 
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = keyEvents;
 
-
-// export const removeEvents = () => {
-//   document.removeEventListener("keydown", keyDownEvents, true);
-// }
-//
-//
-// class keyEvents {
-//   addListeners(player) {
-//     document.addEventListener("keydown", this.keyDownEvents, true );
-//   }
-//
-//   removeListeners() {
-//
-//   }
-//
-//   keyDownEvents(e) {
-//       switch (e.keyCode) {
-//         case 32:
-//         case 38:
-//         case 87:
-//           //  up
-//           player.isJump = true;
-//           break
-//         case 37:
-//         case 65:
-//         // debugger
-//           // left
-//           player.isLeft = true;
-//           break
-//         case 40:
-//         case 83:
-//           //  down
-//           break
-//         case 39:
-//         case 68:
-//           //  right
-//           player.isRight = true;
-//           break
-//         default:
-//           console.log('wrong key')
-//       }
-//   }
-//
-//
-//
-//   //Let go of jump
-//   document.addEventListener("keyup", (e) => {
-//     switch (e.keyCode) {
-//       case 32:
-//       case 38:
-//         case 87:
-//         //  up
-//         player.isJump = false;
-//         break
-//       case 37:
-//       case 65:
-//         // left
-//         player.isLeft = false;
-//         break
-//       case 40:
-//       case 83:
-//         //  down
-//         break
-//       case 39:
-//       case 68:
-//         //  right
-//         player.isRight = false;
-//         break
-//       default:
-//         console.log('wrong key')
-//     }
-//   });
-// }
 
 
 /***/ }),
@@ -427,7 +431,7 @@ const keyEvents = (player) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__level_js__ = __webpack_require__(1);
 
 
-const logic = (player, level) => {
+const logic = (player, level, gameStatus) => {
   //Move Left & Right
   if (player.isLeft) player.velocity_X = -3;
   if (player.isRight) player.velocity_X = 3;
@@ -435,16 +439,17 @@ const logic = (player, level) => {
   // console.log(player.distance);
 
   // Player Death
-  if (player.Y > 500) {
-    document.body.className = 'death';
-    console.log("you lose");
-    // graphics.setTransform()
-    player.Y = 0;
-    player.X = 375 - 23;
-    // debugger
-    level.clear();
-    debugger
-  }
+  // if (player.Y > 500) {
+  //   // debugger
+  //   document.body.className = 'death';
+  //   console.log("you lose");
+  //   // graphics.setTransform()
+  //   player.Y = 0;
+  //   player.X = 375 - 23;
+  //   // debugger
+  //   level.clear();
+  //   // debugger
+  // }
 
   // Stand on Platform
   if (!player.isLeft && !player.isRight && player.velocity_Y === 0) player.velocity_X = 0;
@@ -647,6 +652,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const graphics = gameCanvas.getContext('2d');
   let gameStatus = true;
 
+
+
   // Create Player
   const playerCreation = {
     img: "assets/grid-sprite.png",
@@ -659,7 +666,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);
 
   //Create Level
-  const level = __WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */];
+  let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
+
+  function splashIntro() {
+    gameCanvas.removeEventListener("click", splashIntro, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-crying-kim.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+    setTimeout(mainLoop, 2000);
+    // document.addEventListener("click", mainLoop, true);
+  }
 
   function splashControls() {
     gameCanvas.removeEventListener("click", splashControls, true);
@@ -673,17 +692,7 @@ document.addEventListener("DOMContentLoaded", () => {
     gameCanvas.addEventListener("click", splashIntro, true);
   }
 
-  function splashIntro() {
-    gameCanvas.removeEventListener("click", splashIntro, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-crying-kim.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    setTimeout(mainLoop, 2000);
-    // document.addEventListener("click", mainLoop, true);
-  }
+
   //Event Handler
   __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
   const welcome = () => {
@@ -699,6 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const ending = () => {
     gameStatus = false;
+
     let base_image = new Image();
     base_image.src = 'assets/splash-ending.jpg';
     base_image.onload = function(){
@@ -717,33 +727,34 @@ document.addEventListener("DOMContentLoaded", () => {
     // removeEvents();
   }
 
-  const kanyeCreation = {
-    img: "assets/nightmare-kanye.png",
-    x: 600,
-    y: 350,
-    width: 49,
-    height: 47
-  }
-  let kanye = new __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */](kanyeCreation);
+  //end game temp object
+  // const kanyeCreation = {
+  //   img: "assets/nightmare-kanye.png",
+  //   x: 600,
+  //   y: 350,
+  //   width: 49,
+  //   height: 47
+  // }
+  // let kanye = new gameObject(kanyeCreation);
 
   const mainLoop = () => {
     document.removeEventListener("click", mainLoop, true);
     //Pre Variable Adjustments pan screen based on player
-    kanye.X += -player.velocity_X;
+    // kanye.X += -player.velocity_X;
     level.blocks.forEach( block => {
       block.X += -player.velocity_X;
     });
 
     player.Y += player.velocity_Y;
 
-    if (player.isColliding(kanye)) {
-      ending();
-    }
+    // if (player.isColliding(kanye)) {
+    //   ending();
+    // }
 
 
 
     // Game Logic
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, gameStatus);
 
     //Post Variable Adjustments
 
@@ -751,16 +762,35 @@ document.addEventListener("DOMContentLoaded", () => {
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
 
 
-    graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
+    // graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
 
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
 
     // clear timeout
-    if (gameStatus)
-    setTimeout(mainLoop, 1000/60);
+    var frames = setTimeout(mainLoop, 1000/60);
+
+    if (player.Y > 500) {
+      // level.clear();
+      clearTimeout(frames);
+      // debugger
+      document.body.className = 'death';
+      console.log("you lose");
+      // graphics.setTransform()
+      graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+      player.Y = 0;
+      player.X = 375 - 23;
+      debugger
+      let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
+      for (var i = 0; i < level.numBlocks(); i++) {
+        graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
+      }
+      // mainLoop();
+    }
   };
   welcome();
   // mainLoop();
+  // start();
+
 
 });
 
