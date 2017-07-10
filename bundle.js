@@ -431,12 +431,31 @@ const keyEvents = (player) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__level_js__ = __webpack_require__(1);
 
 
-const logic = (player, level, gameStatus) => {
+const logic = (player, level, gameStatus, frames) => {
   //Move Left & Right
   if (player.isLeft) player.velocity_X = -3;
   if (player.isRight) player.velocity_X = 3;
   player.distance += player.velocity_X;
   // console.log(player.distance);
+
+  // if (player.Y > 500 && level) {
+  //   // debugger
+  //   // level.clear();
+  //   clearTimeout(frames);
+  //   // debugger
+  //   document.body.className = 'death';
+  //   console.log("you lose");
+  //   // graphics.setTransform()
+  //   graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+  //   player.Y = 0;
+  //   player.X = 375 - 23;
+  //   debugger
+  //   level = generateLevelOne();
+  //   for (var i = 0; i < level.numBlocks(); i++) {
+  //     graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
+  //   }
+  //   // mainLoop();
+  // }
 
   // Player Death
   // if (player.Y > 500) {
@@ -754,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Game Logic
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, gameStatus);
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, gameStatus,frames );
 
     //Post Variable Adjustments
 
@@ -770,6 +789,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var frames = setTimeout(mainLoop, 1000/60);
 
     if (player.Y > 500) {
+
       // level.clear();
       clearTimeout(frames);
       // debugger
@@ -777,14 +797,15 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("you lose");
       // graphics.setTransform()
       graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+      player.velocity_X = 0;
       player.Y = 0;
-      player.X = 375 - 23;
-      debugger
-      let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
+      player.X = 220;
+      // debugger
+      level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
       for (var i = 0; i < level.numBlocks(); i++) {
         graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
       }
-      // mainLoop();
+      mainLoop();
     }
   };
   welcome();
