@@ -283,10 +283,6 @@ generateBlock({
 
 "use strict";
 const keyEvents = (player) => {
-  function removeEvents() {
-    document.removeEventListener("keydown", keyDownEvents, true);
-  }
-
   document.addEventListener("keydown", keyDownEvents, true );
 
   //Let go of jump
@@ -346,8 +342,81 @@ const keyEvents = (player) => {
   }
 
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = keyEvents;
 
-/* harmony default export */ __webpack_exports__["a"] = (keyEvents);
+
+// export const removeEvents = () => {
+//   document.removeEventListener("keydown", keyDownEvents, true);
+// }
+//
+//
+// class keyEvents {
+//   addListeners(player) {
+//     document.addEventListener("keydown", this.keyDownEvents, true );
+//   }
+//
+//   removeListeners() {
+//
+//   }
+//
+//   keyDownEvents(e) {
+//       switch (e.keyCode) {
+//         case 32:
+//         case 38:
+//         case 87:
+//           //  up
+//           player.isJump = true;
+//           break
+//         case 37:
+//         case 65:
+//         // debugger
+//           // left
+//           player.isLeft = true;
+//           break
+//         case 40:
+//         case 83:
+//           //  down
+//           break
+//         case 39:
+//         case 68:
+//           //  right
+//           player.isRight = true;
+//           break
+//         default:
+//           console.log('wrong key')
+//       }
+//   }
+//
+//
+//
+//   //Let go of jump
+//   document.addEventListener("keyup", (e) => {
+//     switch (e.keyCode) {
+//       case 32:
+//       case 38:
+//         case 87:
+//         //  up
+//         player.isJump = false;
+//         break
+//       case 37:
+//       case 65:
+//         // left
+//         player.isLeft = false;
+//         break
+//       case 40:
+//       case 83:
+//         //  down
+//         break
+//       case 39:
+//       case 68:
+//         //  right
+//         player.isRight = false;
+//         break
+//       default:
+//         console.log('wrong key')
+//     }
+//   });
+// }
 
 
 /***/ }),
@@ -576,6 +645,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const gameCanvas = document.getElementById('canvas');
   const graphics = gameCanvas.getContext('2d');
+  let gameStatus = true;
 
   // Create Player
   const playerCreation = {
@@ -615,7 +685,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // document.addEventListener("click", mainLoop, true);
   }
   //Event Handler
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */])(player);
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
   const welcome = () => {
     let base_image = new Image();
     base_image.src = 'assets/start-game.jpg';
@@ -628,12 +698,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const ending = () => {
+    gameStatus = false;
     let base_image = new Image();
     base_image.src = 'assets/splash-ending.jpg';
     base_image.onload = function(){
       graphics.drawImage(base_image, 0, 0);
     }
-    __WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* default */].removeEvents();
+    let credits_Y = 0;
+    const rollCredits = () => {
+      graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+        graphics.drawImage(base_image, 0, credits_Y);
+      // debugger
+      credits_Y -= .6;
+      setTimeout(rollCredits, 1000/60);
+    }
+
+    rollCredits();
+    // removeEvents();
   }
 
   const kanyeCreation = {
@@ -675,6 +756,7 @@ document.addEventListener("DOMContentLoaded", () => {
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
 
     // clear timeout
+    if (gameStatus)
     setTimeout(mainLoop, 1000/60);
   };
   welcome();
