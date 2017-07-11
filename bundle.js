@@ -948,7 +948,6 @@ class Sound {
   }
 
   muteToggle() {
-    console.log("click")
     document.getElementById("mute").classList.toggle("volume-off")
     if (this.mute) {
       // Turn Off
