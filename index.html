@@ -6,19 +6,24 @@
   <title>Runaway Game</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
   <script src="bundle.js"></script>
+  <script src="https://use.fontawesome.com/f660b6bdba.js"></script>
 </head>
 
 <body>
   <h1>Runaway</h1>
-  <audio controls loop autoplay id="myaudio">
-    <source src="assets/runaway.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
+  <div class="icon-box">
+    <div>
+      <a href="http://markpassando.com/"><i class="fa fa-home" aria-hidden="true"></i></a>
+    </div>
+    <div>
+      <a href="https://github.com/markpassando"><i class="fa fa-github" aria-hidden="true"></i></a>
+    </div>
+    <div>
+      <a href="https://www.linkedin.com/in/markpassando/"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+    </div>
+  </div>
 
-  <script>
-    let audio = document.getElementById("myaudio");
-    audio.volume = 0.4;
-  </script>
+  <div class="controls"><i id="mute" class="fa fa-volume-up" aria-hidden="true"></i></div>
   <canvas id="canvas" width="900" height="500"></canvas>
 </body>
 

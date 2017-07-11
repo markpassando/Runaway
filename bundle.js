@@ -733,6 +733,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__objects_level_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__objects_sounds_js__ = __webpack_require__(8);
+
 
 
 
@@ -741,21 +743,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  // sound
-  // const thanksWill = new Audio('assets/runaway.mp3');
-  // thanksWill.volume = .5;
-  // if (typeof thanksWill.loop == 'boolean')
-  // {
-  //     thanksWill.loop = true;
-  // }
-  // else
-  // {
-  //     thanksWill.addEventListener('ended', function() {
-  //         this.currentTime = 0;
-  //         this.play();
-  //     }, false);
-  // }
-  // thanksWill.play();
+
+  const sounds = new __WEBPACK_IMPORTED_MODULE_6__objects_sounds_js__["a" /* default */]();
+  sounds.playTheme();
 
   const gameCanvas = document.getElementById('canvas');
   const graphics = gameCanvas.getContext('2d');
@@ -866,7 +856,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainLoop = () => {
     gameCanvas.removeEventListener("click", mainLoop, true);
     //TEMP KIM
-    // kim.X += -player.velocity_X;
+    kim.X += -player.velocity_X;
     // Move objects in relation to Player
     level.blocks.forEach( block => {
       block.X += -player.velocity_X;
@@ -887,10 +877,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     var frames = setTimeout(mainLoop, 1000/60);
 
-    if (player.isColliding(kim)) {
-      clearTimeout(frames);
-      ending();
-    }
+    // if (player.isColliding(kim)) {
+    //   clearTimeout(frames);
+    //   sounds.music.theme.pause();
+    //   sounds.music.ending.play();
+    //
+    //   ending();
+    // }
 
     // Player Death
     if (player.Y > 500) {
@@ -920,6 +913,66 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default 
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Block);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Sound {
+  constructor() {
+    this.music = {
+      theme: new Audio('assets/audio/runaway.mp3'),
+      ending: new Audio('assets/audio/through-the-wire.mp3')
+    }
+    this.volume = .5;
+    this.mute = false;
+
+    this.addEventHandlers();
+  }
+
+  playTheme() {
+    if (typeof this.music.theme.loop == 'boolean')
+    {
+        this.music.theme.loop = true;
+    }
+    else
+    {
+        this.music.theme.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+    }
+    this.music.theme.play();
+  }
+
+  muteToggle() {
+    console.log("click")
+    document.getElementById("mute").classList.toggle("volume-off")
+    if (this.mute) {
+      // Turn Off
+      for (const key of Object.keys(this.music)) {
+        this.music[key].muted = false;
+        this.mute = false;
+      }
+    } else {
+      // Turn On
+      for (const key of Object.keys(this.music)) {
+        this.music[key].muted = true;
+        this.mute = true;
+      }
+    }
+  }
+
+  addEventHandlers() {
+    const muteBtn = document.getElementById("mute");
+    muteBtn.addEventListener("click", () => this.muteToggle(), true);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Sound);
 
 
 /***/ })

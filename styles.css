@@ -27,3 +27,40 @@ h1 {
   text-transform: uppercase;
   font-weight: 400;
 }
+
+.volume-off {
+  color: #fff;
+}
+
+.icon-box {
+  display: flex;
+  margin: 0 auto;
+  font-size: 25px;
+  max-width: 130px;
+  justify-content: space-around;
+}
+
+.icon-box a {
+  color: #000;
+}
+
+.icon-box a:hover {
+  color: #fff;
+}
+
+.controls {
+  display: flex;
+  max-width: 920px;
+  margin: 0 auto;
+  justify-content: flex-end;
+  padding-bottom: 5px;
+}
+
+#mute {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+#mute:hover {
+  color: #ffe753;
+}
