@@ -687,16 +687,28 @@ document.addEventListener("DOMContentLoaded", () => {
   //Create Level
   let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
 
-  function splashIntro() {
-    gameCanvas.removeEventListener("click", splashIntro, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+  function retry() {
+    gameCanvas.removeEventListener("click", retry, true);
+    player.velocity_X = 0;
+    player.Y = 0;
+    player.X = 220;
+    level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
+    for (var i = 0; i < level.numBlocks(); i++) {
+      graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
+    }
+    document.body.classList.toggle('death');
+    mainLoop();
+  }
+
+  const welcome = () => {
     let base_image = new Image();
-    base_image.src = 'assets/splash-crying-kim.jpg';
+    base_image.src = 'assets/start-game.jpg';
     base_image.onload = function(){
       graphics.drawImage(base_image, 0, 0);
     }
-    setTimeout(mainLoop, 2000);
-    // document.addEventListener("click", mainLoop, true);
+
+    gameCanvas.addEventListener("click", splashControls, true);
+
   }
 
   function splashControls() {
@@ -711,19 +723,35 @@ document.addEventListener("DOMContentLoaded", () => {
     gameCanvas.addEventListener("click", splashIntro, true);
   }
 
-
-  //Event Handler
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
-  const welcome = () => {
+  function splashIntro() {
+    gameCanvas.removeEventListener("click", splashIntro, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
     let base_image = new Image();
-    base_image.src = 'assets/start-game.jpg';
+    base_image.src = 'assets/splash-crying-kim.png';
     base_image.onload = function(){
       graphics.drawImage(base_image, 0, 0);
     }
-
-    gameCanvas.addEventListener("click", splashControls, true);
-
+    setTimeout(mainLoop, 2000);
   }
+
+  function splashRetry() {
+    document.body.classList.toggle('death');
+    // document.body.className = 'death';
+    // gameCanvas.removeEventListener("click", splashIntro, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-retry.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+    // setTimeout(mainLoop, 2000);
+    gameCanvas.addEventListener("click", retry, true);
+  }
+
+
+  //Event Handler
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
+
 
   const ending = () => {
     gameStatus = false;
@@ -770,48 +798,27 @@ document.addEventListener("DOMContentLoaded", () => {
     //   ending();
     // }
 
-
-
     // Game Logic
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, gameStatus,frames );
 
-    //Post Variable Adjustments
-
     //render graphics
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-
 
     // graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
 
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
 
-    // clear timeout
     var frames = setTimeout(mainLoop, 1000/60);
 
+    // Player Death
     if (player.Y > 500) {
-
-      // level.clear();
       clearTimeout(frames);
-      // debugger
-      document.body.className = 'death';
-      console.log("you lose");
-      // graphics.setTransform()
-      graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-      player.velocity_X = 0;
-      player.Y = 0;
-      player.X = 220;
-      // debugger
-      level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
-      for (var i = 0; i < level.numBlocks(); i++) {
-        graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-      }
-      mainLoop();
+      splashRetry();
+      // mainLoop();
     }
   };
   welcome();
   // mainLoop();
-  // start();
-
 
 });
 
