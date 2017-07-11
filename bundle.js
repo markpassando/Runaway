@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -109,7 +109,7 @@ class gameObject {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(4);
 
 
 
@@ -487,69 +487,79 @@ generateBlock({
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const keyEvents = (player) => {
-  document.addEventListener("keydown", keyDownEvents, true );
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__level_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sounds_js__ = __webpack_require__(6);
 
-  function keyDownEvents(e) {
-      switch (e.keyCode) {
-        case 32:
-        case 38:
-        case 87:
-          //  up
-          player.isJump = true;
-          break
-        case 37:
-        case 65:
-        // debugger
-          // left
-          player.isLeft = true;
-          break
-        case 40:
-        case 83:
-          //  down
-          break
-        case 39:
-        case 68:
-          //  right
-          player.isRight = true;
-          break
-      }
+
+
+
+
+class Game {
+  constructor() {
+    this.gameCanvas = document.getElementById('canvas');
+    this.graphics = this.gameCanvas.getContext('2d');
+    this.sounds = new __WEBPACK_IMPORTED_MODULE_3__sounds_js__["a" /* default */]();
+    this.level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__level_js__["a" /* default */])();
+    this.player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */]({
+      img: "assets/grid-sprite.png",
+      x: 220,
+      y: 0,
+      width: 46,
+      height: 94
+    });
+    
+    // testing coords
+    // x: 600,
+    // y: 280,
+    this.kim = new __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */]({
+      img: "assets/kim.png",
+      x: 8500,
+      y: 280,
+      width: 48,
+      height: 121
+    });
   }
 
-  document.addEventListener("keyup", (e) => {
-    switch (e.keyCode) {
-      case 32:
-      case 38:
-      case 87:
-        //  up
-        player.isJump = false;
-        break
-
-      case 37:
-      case 65:
-        // left
-        player.isLeft = false;
-        break
-
-      case 40:
-      case 83:
-        //  down
-        break
-
-      case 39:
-      case 68:
-        //  right
-        player.isRight = false;
-        break
-
-      default:
-        console.log('wrong key')
-    }
+update() {
+  // Kim
+  this.kim.X += -this.player.velocity_X;
+  // Blocks
+  this.level.blocks.forEach( block => {
+    block.X += -this.player.velocity_X;
   });
+  this.player.Y += this.player.velocity_Y;
+}
+
+render() {
+  // Clear canvas
+  this.graphics.clearRect( 0, 0, this.gameCanvas.width, this.gameCanvas.height);
+
+  // Render All blocks
+  for (var i = 0; i < this.level.numBlocks(); i++) {
+    this.graphics.drawImage(this.level.blocks[i].sprite, this.level.blocks[i].X, this.level.blocks[i].Y);
+  }
+
+  // Draw Kim
+  this.graphics.drawImage(this.kim.sprite, this.kim.X, this.kim.Y);
+
+  // Player Sprites Animation
+  if (this.player.velocity_X === 0 && this.player.velocity_Y === 0) {
+    // Standing, sprites need work
+
+  } else if (this.player.velocity_X !== 0) {
+    // Running
+    this.player.spriteAnimCounter += .2;
+  }
+
+  //Draw Player
+  this.player.draw(this.graphics);
+}
 
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = keyEvents;
 
+/* harmony default export */ __webpack_exports__["a"] = (Game);
 
 
 /***/ }),
@@ -557,75 +567,163 @@ const keyEvents = (player) => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__objects_level_js__ = __webpack_require__(1);
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__objects_game_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_level_js__ = __webpack_require__(1);
 
 
-const logic = (player, level, frames) => {
-  //Move Left & Right
-  if (player.isLeft) player.velocity_X = -3;
-  if (player.isRight) player.velocity_X = 3;
-  player.distance += player.velocity_X;
-  // console.log(player.distance);
 
-  // Stand on Platform
-  if (!player.isLeft && !player.isRight && player.velocity_Y === 0) player.velocity_X = 0;
+document.addEventListener("DOMContentLoaded", () => {
+  const game = new __WEBPACK_IMPORTED_MODULE_0__objects_game_js__["a" /* default */]();
+  game.sounds.playTheme();
+  game.player.addEventHandlers();
 
-  // Fall velocity with weight
-  if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
-
-  //Platform Collision
-  // Regular Blocks, Falling off block objects
-  const platformBlocks = level.platformBlocks();
-  platformBlocks.forEach( block => {
-    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
-      player.Y = block.Y - player.height;
-      player.velocity_Y = 0;
+  function welcome() {
+    let base_image = new Image();
+    base_image.src = 'assets/start-game.jpg';
+    base_image.onload = function(){
+      game.graphics.drawImage(base_image, 0, 0);
     }
-  });
 
-  //Falling Blocks
-  const fallingBlocks = level.fallingBlocks();
-  fallingBlocks.forEach( block => {
-    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
-      block.gravity = 50;
-      block.weight = 1;
-      if (block.velocity_Y < block.gravity) block.velocity_Y += block.weight;
-      player.velocity_Y = 0;
-      player.canJump = true;
-    }
-    block.Y += block.velocity_Y;
-  });
-
-  //Spring Blocks
-  const springBlocks = level.springBlocks();
-  springBlocks.forEach( block => {
-    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
-      player.Y = block.Y - player.height;
-      player.velocity_Y = 0;
-      player.springJump = true;
-    }
-  });
-
-  //Jump
-  if (player.isJump && player.velocity_Y === 0 || player.isJump && player.canJump) {
-    player.velocity_Y = -4.5;
-    player.canJump = false;
+    game.gameCanvas.addEventListener("click", splashControls, true);
   }
 
-  //Spring Jump
-  if (player.springJump) {
-    player.velocity_Y = -7;
-    player.springJump = false;
+  function splashControls() {
+    game.gameCanvas.removeEventListener("click", splashControls, true);
+    game.graphics.clearRect( 0, 0, game.gameCanvas.width, game.gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-controls.jpg';
+    base_image.onload = function(){
+      game.graphics.drawImage(base_image, 0, 0);
+    }
+
+    game.gameCanvas.addEventListener("click", splashIntro, true);
   }
 
+  function splashIntro() {
+    game.gameCanvas.removeEventListener("click", splashIntro, true);
+    game.graphics.clearRect( 0, 0, game.gameCanvas.width, game.gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-crying-kim.png';
+    base_image.onload = function(){
+      game.graphics.drawImage(base_image, 0, 0);
+    }
 
-}
+    setTimeout(mainLoop, 2000);
+  }
 
-/* harmony default export */ __webpack_exports__["a"] = (logic);
+  function splashRetry() {
+    document.body.classList.toggle('death');
+    game.graphics.clearRect( 0, 0, game.gameCanvas.width, game.gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-retry.jpg';
+    base_image.onload = function(){
+      game.graphics.drawImage(base_image, 0, 0);
+    }
+
+    game.gameCanvas.addEventListener("click", retry, true);
+  }
+
+  function ending() {
+    let base_image = new Image();
+    base_image.src = 'assets/splash-ending.jpg';
+    base_image.onload = function(){
+      game.graphics.drawImage(base_image, 0, 0);
+    }
+    let credits_Y = 0;
+
+    function rollCredits() {
+      game.graphics.clearRect( 0, 0, game.gameCanvas.width, game.gameCanvas.height);
+        game.graphics.drawImage(base_image, 0, credits_Y);
+      credits_Y -= .6;
+      setTimeout(rollCredits, 1000/60);
+    }
+
+    rollCredits();
+  }
+
+  function retry() {
+    game.gameCanvas.removeEventListener("click", retry, true);
+    // Reset Player
+    game.player.velocity_X = 0;
+    game.player.Y = 0;
+    game.player.X = 220;
+
+    // Testing vars
+    // game.kim.Y = 280;
+    // game.kim.X = 600;
+
+    // Reset Kim
+    game.kim.Y = 280;
+    game.kim.X = 8500;
+
+    // Reset Levels
+    game.level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__objects_level_js__["a" /* default */])();
+    for (var i = 0; i < game.level.numBlocks(); i++) {
+      game.graphics.drawImage(game.level.blocks[i].sprite, game.level.blocks[i].X, game.level.blocks[i].Y);
+    }
+    document.body.classList.toggle('death');
+
+    mainLoop();
+  }
+
+  const mainLoop = () => {
+    // Turn off Intro Handler
+    game.gameCanvas.removeEventListener("click", mainLoop, true);
+
+    // Move objects in relation to Player
+    game.update();
+    // Game Logic
+    game.player.update(game.level);
+
+    // Render Game
+    game.render();
+
+    var frames = setTimeout(mainLoop, 1000/60);
+
+    // Player Reaches Kim
+    if (game.player.isColliding(game.kim)) {
+      clearTimeout(frames);
+      game.sounds.music.theme.pause();
+      game.sounds.music.ending.play();
+
+      ending();
+    }
+
+    // Player Death
+    if (game.player.Y > 500) {
+      clearTimeout(frames);
+      splashRetry();
+    }
+  };
+
+  // Starts game
+  welcome();
+
+});
 
 
 /***/ }),
 /* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+
+
+class Block extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor(options){
+    super(options);
+
+    this.type = options.type;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Block);
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -645,6 +743,72 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     this.weight = 0.1;
     this.distance = 0;
     this.spriteAnimCounter = 0;
+
+    this.update = this.update.bind(this);
+  }
+
+  addEventHandlers() {
+    console.log("added");
+    document.addEventListener("keydown", keyDownEvents.bind(this), true );
+    document.addEventListener("keyup", keyUpEvents.bind(this), true );
+
+    function keyDownEvents(e) {
+        switch (e.keyCode) {
+          case 32:
+          case 38:
+          case 87:
+            //  up
+            this.isJump = true;
+            break
+          case 37:
+          case 65:
+          // debugger
+            // left
+            this.isLeft = true;
+            break
+          case 40:
+          case 83:
+            //  down
+            break
+          case 39:
+          case 68:
+            //  right
+            this.isRight = true;
+            break
+        }
+    }
+
+    function keyUpEvents(e) {
+      switch (e.keyCode) {
+        case 32:
+        case 38:
+        case 87:
+          //  up
+          this.isJump = false;
+          break
+
+        case 37:
+        case 65:
+          // left
+          this.isLeft = false;
+          break
+
+        case 40:
+        case 83:
+          //  down
+          break
+
+        case 39:
+        case 68:
+          //  right
+          this.isRight = false;
+          break
+
+        default:
+          console.log('wrong key')
+      }
+    }
+
   }
 
   draw(graphics) {
@@ -690,13 +854,72 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     }
   }
 
+  update(level) {
+    //Move Left & Right
+    if (this.isLeft) this.velocity_X = -3;
+    if (this.isRight) this.velocity_X = 3;
+    this.distance += this.velocity_X;
+    // console.log(this.distance);
+
+    // Stand on Platform
+    if (!this.isLeft && !this.isRight && this.velocity_Y === 0) this.velocity_X = 0;
+
+    // Fall velocity with weight
+    if (this.velocity_Y < this.gravity) this.velocity_Y += this.weight;
+
+    //Platform Collision
+    // Regular Blocks, Falling off block objects
+    const platformBlocks = level.platformBlocks();
+    platformBlocks.forEach( block => {
+      if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
+        this.Y = block.Y - this.height;
+        this.velocity_Y = 0;
+      }
+    });
+
+    //Falling Blocks
+    const fallingBlocks = level.fallingBlocks();
+    fallingBlocks.forEach( block => {
+      if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
+        block.gravity = 50;
+        block.weight = 1;
+        if (block.velocity_Y < block.gravity) block.velocity_Y += block.weight;
+        this.velocity_Y = 0;
+        this.canJump = true;
+      }
+      block.Y += block.velocity_Y;
+    });
+
+    //Spring Blocks
+    const springBlocks = level.springBlocks();
+    springBlocks.forEach( block => {
+      if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
+        this.Y = block.Y - this.height;
+        this.velocity_Y = 0;
+        this.springJump = true;
+      }
+    });
+
+    //Jump
+    if (this.isJump && this.velocity_Y === 0 || this.isJump && this.canJump) {
+      this.velocity_Y = -4.5;
+      this.canJump = false;
+    }
+
+    //Spring Jump
+    if (this.springJump) {
+      this.velocity_Y = -7;
+      this.springJump = false;
+    }
+  }
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Player);
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -752,229 +975,6 @@ class Sound {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Sound);
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// import gameObject from './object.js'``;
-
-const render = (graphics, level, player) => {
-
-  // debugger
-  for (var i = 0; i < level.numBlocks(); i++) {
-    graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-  }
-  // graphics.drawImage(player.sprite, player.X, player.Y);
-  if (this.velocity_X === 0 && this.velocity_Y === 0) {
-
-  } else if (player.velocity_X !== 0) {
-    player.spriteAnimCounter += .2;
-  }
-  player.draw(graphics);
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (render);
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__objects_gameObject_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_player_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__objects_level_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__objects_sounds_js__ = __webpack_require__(5);
-
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  const sounds = new __WEBPACK_IMPORTED_MODULE_6__objects_sounds_js__["a" /* default */]();
-  sounds.playTheme();
-
-  const gameCanvas = document.getElementById('canvas');
-  const graphics = gameCanvas.getContext('2d');
-
-  // Create Player
-  const playerCreation = {
-    img: "assets/grid-sprite.png",
-    x: 220,
-    y: 0,
-    width: 46,
-    height: 94
-  }
-
-  let player = new __WEBPACK_IMPORTED_MODULE_1__objects_player_js__["a" /* default */](playerCreation);
-
-  //Create Level
-  let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__objects_level_js__["a" /* default */])();
-
-  function retry() {
-    gameCanvas.removeEventListener("click", retry, true);
-    player.velocity_X = 0;
-    player.Y = 0;
-    player.X = 220;
-    level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__objects_level_js__["a" /* default */])();
-    for (var i = 0; i < level.numBlocks(); i++) {
-      graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-    }
-    document.body.classList.toggle('death');
-    mainLoop();
-  }
-
-  const welcome = () => {
-    let base_image = new Image();
-    base_image.src = 'assets/start-game.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-
-    gameCanvas.addEventListener("click", splashControls, true);
-
-  }
-
-  function splashControls() {
-    gameCanvas.removeEventListener("click", splashControls, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-controls.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-
-    gameCanvas.addEventListener("click", splashIntro, true);
-  }
-
-  function splashIntro() {
-    gameCanvas.removeEventListener("click", splashIntro, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-crying-kim.png';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    setTimeout(mainLoop, 2000);
-  }
-
-  function splashRetry() {
-    document.body.classList.toggle('death');
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-retry.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    gameCanvas.addEventListener("click", retry, true);
-  }
-
-  function ending() {
-
-    let base_image = new Image();
-    base_image.src = 'assets/splash-ending.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    let credits_Y = 0;
-    function rollCredits() {
-      graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-        graphics.drawImage(base_image, 0, credits_Y);
-      credits_Y -= .6;
-      setTimeout(rollCredits, 1000/60);
-    }
-
-    rollCredits();
-  }
-
-  // test coords
-  // x: 600,
-  // y: 280,
-  //TEMP kim end game object
-  const kimCreation = {
-    img: "assets/kim.png",
-    x: 8500,
-    y: 280,
-    width: 48,
-    height: 121
-  }
-  let kim = new __WEBPACK_IMPORTED_MODULE_0__objects_gameObject_js__["a" /* default */](kimCreation);
-
-  //Event Handler
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
-
-  const mainLoop = () => {
-    gameCanvas.removeEventListener("click", mainLoop, true);
-    //TEMP KIM
-    kim.X += -player.velocity_X;
-    // Move objects in relation to Player
-    level.blocks.forEach( block => {
-      block.X += -player.velocity_X;
-    });
-
-    player.Y += player.velocity_Y;
-
-    // Game Logic
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, frames);
-
-    // Render graphics
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-
-    // TEMP render kim
-    graphics.drawImage(kim.sprite, kim.X, kim.Y);
-
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
-
-    var frames = setTimeout(mainLoop, 1000/60);
-
-    if (player.isColliding(kim)) {
-      clearTimeout(frames);
-      sounds.music.theme.pause();
-      sounds.music.ending.play();
-
-      ending();
-    }
-
-    // Player Death
-    if (player.Y > 500) {
-      clearTimeout(frames);
-      splashRetry();
-    }
-  };
-  welcome();
-
-});
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-
-
-class Block extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
-  constructor(options){
-    super(options);
-
-    this.type = options.type;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Block);
 
 
 /***/ })
