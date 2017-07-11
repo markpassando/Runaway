@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -109,7 +109,7 @@ class gameObject {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(8);
 
 
 
@@ -700,6 +700,65 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+class Sound {
+  constructor() {
+    this.music = {
+      theme: new Audio('assets/audio/runaway.mp3'),
+      ending: new Audio('assets/audio/through-the-wire.mp3')
+    }
+    this.volume = .5;
+    this.mute = false;
+
+    this.addEventHandlers();
+  }
+
+  playTheme() {
+    if (typeof this.music.theme.loop == 'boolean')
+    {
+        this.music.theme.loop = true;
+    }
+    else
+    {
+        this.music.theme.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play();
+        }, false);
+    }
+    this.music.theme.play();
+  }
+
+  muteToggle() {
+    document.getElementById("mute").classList.toggle("volume-off")
+    if (this.mute) {
+      // Turn Off
+      for (const key of Object.keys(this.music)) {
+        this.music[key].muted = false;
+        this.mute = false;
+      }
+    } else {
+      // Turn On
+      for (const key of Object.keys(this.music)) {
+        this.music[key].muted = true;
+        this.mute = true;
+      }
+    }
+  }
+
+  addEventHandlers() {
+    const muteBtn = document.getElementById("mute");
+    muteBtn.addEventListener("click", () => this.muteToggle(), true);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Sound);
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 // import gameObject from './object.js'``;
 
 const render = (graphics, level, player) => {
@@ -722,7 +781,7 @@ const render = (graphics, level, player) => {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -731,9 +790,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_player_js__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__objects_level_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__objects_sounds_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__objects_sounds_js__ = __webpack_require__(5);
 
 
 
@@ -840,10 +899,13 @@ document.addEventListener("DOMContentLoaded", () => {
     rollCredits();
   }
 
+  // test coords
+  // x: 600,
+  // y: 280,
   //TEMP kim end game object
   const kimCreation = {
     img: "assets/kim.png",
-    x: 600,
+    x: 8500,
     y: 280,
     width: 48,
     height: 121
@@ -871,19 +933,19 @@ document.addEventListener("DOMContentLoaded", () => {
     graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
 
     // TEMP render kim
-    // graphics.drawImage(kim.sprite, kim.X, kim.Y);
+    graphics.drawImage(kim.sprite, kim.X, kim.Y);
 
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
 
     var frames = setTimeout(mainLoop, 1000/60);
 
-    // if (player.isColliding(kim)) {
-    //   clearTimeout(frames);
-    //   sounds.music.theme.pause();
-    //   sounds.music.ending.play();
-    //
-    //   ending();
-    // }
+    if (player.isColliding(kim)) {
+      clearTimeout(frames);
+      sounds.music.theme.pause();
+      sounds.music.ending.play();
+
+      ending();
+    }
 
     // Player Death
     if (player.Y > 500) {
@@ -897,7 +959,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -913,65 +975,6 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default 
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Block);
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-class Sound {
-  constructor() {
-    this.music = {
-      theme: new Audio('assets/audio/runaway.mp3'),
-      ending: new Audio('assets/audio/through-the-wire.mp3')
-    }
-    this.volume = .5;
-    this.mute = false;
-
-    this.addEventHandlers();
-  }
-
-  playTheme() {
-    if (typeof this.music.theme.loop == 'boolean')
-    {
-        this.music.theme.loop = true;
-    }
-    else
-    {
-        this.music.theme.addEventListener('ended', function() {
-            this.currentTime = 0;
-            this.play();
-        }, false);
-    }
-    this.music.theme.play();
-  }
-
-  muteToggle() {
-    document.getElementById("mute").classList.toggle("volume-off")
-    if (this.mute) {
-      // Turn Off
-      for (const key of Object.keys(this.music)) {
-        this.music[key].muted = false;
-        this.mute = false;
-      }
-    } else {
-      // Turn On
-      for (const key of Object.keys(this.music)) {
-        this.music[key].muted = true;
-        this.mute = true;
-      }
-    }
-  }
-
-  addEventHandlers() {
-    const muteBtn = document.getElementById("mute");
-    muteBtn.addEventListener("click", () => this.muteToggle(), true);
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Sound);
 
 
 /***/ })
