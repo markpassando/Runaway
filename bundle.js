@@ -67,7 +67,379 @@
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */
+/* 0 */,
+/* 1 */,
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const keyEvents = (player) => {
+  document.addEventListener("keydown", keyDownEvents, true );
+
+  function keyDownEvents(e) {
+      switch (e.keyCode) {
+        case 32:
+        case 38:
+        case 87:
+          //  up
+          player.isJump = true;
+          break
+        case 37:
+        case 65:
+        // debugger
+          // left
+          player.isLeft = true;
+          break
+        case 40:
+        case 83:
+          //  down
+          break
+        case 39:
+        case 68:
+          //  right
+          player.isRight = true;
+          break
+      }
+  }
+
+  document.addEventListener("keyup", (e) => {
+    switch (e.keyCode) {
+      case 32:
+      case 38:
+      case 87:
+        //  up
+        player.isJump = false;
+        break
+
+      case 37:
+      case 65:
+        // left
+        player.isLeft = false;
+        break
+
+      case 40:
+      case 83:
+        //  down
+        break
+
+      case 39:
+      case 68:
+        //  right
+        player.isRight = false;
+        break
+
+      default:
+        console.log('wrong key')
+    }
+  });
+
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = keyEvents;
+
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__objects_level_js__ = __webpack_require__(9);
+
+
+const logic = (player, level, frames) => {
+  //Move Left & Right
+  if (player.isLeft) player.velocity_X = -3;
+  if (player.isRight) player.velocity_X = 3;
+  player.distance += player.velocity_X;
+  // console.log(player.distance);
+
+  // Stand on Platform
+  if (!player.isLeft && !player.isRight && player.velocity_Y === 0) player.velocity_X = 0;
+
+  // Fall velocity with weight
+  if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
+
+  //Platform Collision
+  // Regular Blocks, Falling off block objects
+  const platformBlocks = level.platformBlocks();
+  platformBlocks.forEach( block => {
+    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
+      player.Y = block.Y - player.height;
+      player.velocity_Y = 0;
+    }
+  });
+
+  //Falling Blocks
+  const fallingBlocks = level.fallingBlocks();
+  fallingBlocks.forEach( block => {
+    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
+      block.gravity = 50;
+      block.weight = 1;
+      if (block.velocity_Y < block.gravity) block.velocity_Y += block.weight;
+      player.velocity_Y = 0;
+      player.canJump = true;
+    }
+    block.Y += block.velocity_Y;
+  });
+
+  //Spring Blocks
+  const springBlocks = level.springBlocks();
+  springBlocks.forEach( block => {
+    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
+      player.Y = block.Y - player.height;
+      player.velocity_Y = 0;
+      player.springJump = true;
+    }
+  });
+
+  //Jump
+  if (player.isJump && player.velocity_Y === 0 || player.isJump && player.canJump) {
+    player.velocity_Y = -4.5;
+    player.canJump = false;
+  }
+
+  //Spring Jump
+  if (player.springJump) {
+    player.velocity_Y = -7;
+    player.springJump = false;
+  }
+
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (logic);
+
+
+/***/ }),
+/* 4 */,
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// import gameObject from './object.js'``;
+
+const render = (graphics, level, player) => {
+
+  // debugger
+  for (var i = 0; i < level.numBlocks(); i++) {
+    graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
+  }
+  // graphics.drawImage(player.sprite, player.X, player.Y);
+  if (this.velocity_X === 0 && this.velocity_Y === 0) {
+
+  } else if (player.velocity_X !== 0) {
+    player.spriteAnimCounter += .2;
+  }
+  player.draw(graphics);
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (render);
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__objects_gameObject_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_player_js__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__objects_level_js__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  // sound
+  // const thanksWill = new Audio('assets/runaway.mp3');
+  // thanksWill.volume = .5;
+  // if (typeof thanksWill.loop == 'boolean')
+  // {
+  //     thanksWill.loop = true;
+  // }
+  // else
+  // {
+  //     thanksWill.addEventListener('ended', function() {
+  //         this.currentTime = 0;
+  //         this.play();
+  //     }, false);
+  // }
+  // thanksWill.play();
+
+  const gameCanvas = document.getElementById('canvas');
+  const graphics = gameCanvas.getContext('2d');
+
+  // Create Player
+  const playerCreation = {
+    img: "assets/grid-sprite.png",
+    x: 220,
+    y: 0,
+    width: 46,
+    height: 94
+  }
+
+  let player = new __WEBPACK_IMPORTED_MODULE_1__objects_player_js__["a" /* default */](playerCreation);
+
+  //Create Level
+  let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__objects_level_js__["a" /* default */])();
+
+  function retry() {
+    gameCanvas.removeEventListener("click", retry, true);
+    player.velocity_X = 0;
+    player.Y = 0;
+    player.X = 220;
+    level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__objects_level_js__["a" /* default */])();
+    for (var i = 0; i < level.numBlocks(); i++) {
+      graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
+    }
+    document.body.classList.toggle('death');
+    mainLoop();
+  }
+
+  const welcome = () => {
+    let base_image = new Image();
+    base_image.src = 'assets/start-game.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+
+    gameCanvas.addEventListener("click", splashControls, true);
+
+  }
+
+  function splashControls() {
+    gameCanvas.removeEventListener("click", splashControls, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-controls.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+
+    gameCanvas.addEventListener("click", splashIntro, true);
+  }
+
+  function splashIntro() {
+    gameCanvas.removeEventListener("click", splashIntro, true);
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-crying-kim.png';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+    setTimeout(mainLoop, 2000);
+  }
+
+  function splashRetry() {
+    document.body.classList.toggle('death');
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+    let base_image = new Image();
+    base_image.src = 'assets/splash-retry.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+    gameCanvas.addEventListener("click", retry, true);
+  }
+
+  function ending() {
+
+    let base_image = new Image();
+    base_image.src = 'assets/splash-ending.jpg';
+    base_image.onload = function(){
+      graphics.drawImage(base_image, 0, 0);
+    }
+    let credits_Y = 0;
+    function rollCredits() {
+      graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+        graphics.drawImage(base_image, 0, credits_Y);
+      credits_Y -= .6;
+      setTimeout(rollCredits, 1000/60);
+    }
+
+    rollCredits();
+  }
+
+  //TEMP kim end game object
+  const kimCreation = {
+    img: "assets/kim.png",
+    x: 600,
+    y: 280,
+    width: 48,
+    height: 121
+  }
+  let kim = new __WEBPACK_IMPORTED_MODULE_0__objects_gameObject_js__["a" /* default */](kimCreation);
+
+  //Event Handler
+  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
+
+  const mainLoop = () => {
+    gameCanvas.removeEventListener("click", mainLoop, true);
+    //TEMP KIM
+    // kim.X += -player.velocity_X;
+    // Move objects in relation to Player
+    level.blocks.forEach( block => {
+      block.X += -player.velocity_X;
+    });
+
+    player.Y += player.velocity_Y;
+
+    // Game Logic
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, frames);
+
+    // Render graphics
+    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
+
+    // TEMP render kim
+    // graphics.drawImage(kim.sprite, kim.X, kim.Y);
+
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
+
+    var frames = setTimeout(mainLoop, 1000/60);
+
+    if (player.isColliding(kim)) {
+      clearTimeout(frames);
+      ending();
+    }
+
+    // Player Death
+    if (player.Y > 500) {
+      clearTimeout(frames);
+      splashRetry();
+    }
+  };
+  welcome();
+
+});
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(8);
+
+
+class Block extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor(options){
+    super(options);
+
+    this.type = options.type;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Block);
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -104,12 +476,12 @@ class gameObject {
 
 
 /***/ }),
-/* 1 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__objects_block_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(7);
 
 
 
@@ -153,7 +525,7 @@ const generateBlock = (options) => {
 
   let totalWidth = 0;
   for (var i = 1; i <= num; i++) {
-    level.blocks.push(new __WEBPACK_IMPORTED_MODULE_1__objects_block_js__["a" /* default */]({
+    level.blocks.push(new __WEBPACK_IMPORTED_MODULE_1__block_js__["a" /* default */]({
       img: img,
       x: x + (totalWidth),
       y: y,
@@ -357,185 +729,14 @@ const generateLevelOne = () => {
 
 
 /***/ }),
-/* 2 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const keyEvents = (player) => {
-  document.addEventListener("keydown", keyDownEvents, true );
-
-  //Let go of jump
-  document.addEventListener("keyup", (e) => {
-    switch (e.keyCode) {
-        case 32:
-        // case 38:
-        // case 87:
-        //  up
-        player.isJump = false;
-        break
-      case 37:
-      case 65:
-        // left
-        player.isLeft = false;
-        break
-      case 40:
-      case 83:
-        //  down
-        break
-      case 39:
-      case 68:
-        //  right
-        player.isRight = false;
-        break
-      default:
-        console.log('wrong key')
-    }
-  });
-
-  function keyDownEvents(e) {
-      switch (e.keyCode) {
-        case 32:
-        // case 38:
-        // case 87:
-          //  up
-          player.isJump = true;
-          break
-        case 37:
-        case 65:
-        // debugger
-          // left
-          player.isLeft = true;
-          break
-        case 40:
-        case 83:
-          //  down
-          break
-        case 39:
-        case 68:
-          //  right
-          player.isRight = true;
-          break
-      }
-  }
-
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = keyEvents;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(8);
 
 
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__level_js__ = __webpack_require__(1);
-
-
-const logic = (player, level, gameStatus, frames) => {
-  //Move Left & Right
-  if (player.isLeft) player.velocity_X = -3;
-  if (player.isRight) player.velocity_X = 3;
-  player.distance += player.velocity_X;
-  // console.log(player.distance);
-
-  // if (player.Y > 500 && level) {
-  //   // debugger
-  //   // level.clear();
-  //   clearTimeout(frames);
-  //   // debugger
-  //   document.body.className = 'death';
-  //   console.log("you lose");
-  //   // graphics.setTransform()
-  //   graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-  //   player.Y = 0;
-  //   player.X = 375 - 23;
-  //   debugger
-  //   level = generateLevelOne();
-  //   for (var i = 0; i < level.numBlocks(); i++) {
-  //     graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-  //   }
-  //   // mainLoop();
-  // }
-
-  // Player Death
-  // if (player.Y > 500) {
-  //   // debugger
-  //   document.body.className = 'death';
-  //   console.log("you lose");
-  //   // graphics.setTransform()
-  //   player.Y = 0;
-  //   player.X = 375 - 23;
-  //   // debugger
-  //   level.clear();
-  //   // debugger
-  // }
-
-  // Stand on Platform
-  if (!player.isLeft && !player.isRight && player.velocity_Y === 0) player.velocity_X = 0;
-
-  // Fall velocity with weight
-  if (player.velocity_Y < player.gravity) player.velocity_Y += player.weight;
-
-  //Platform Collision
-  // Regular Blocks, Falling off block objects
-  const platformBlocks = level.platformBlocks();
-  platformBlocks.forEach( block => {
-    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
-      player.Y = block.Y - player.height;
-      player.velocity_Y = 0;
-    }
-  });
-
-  //Falling Blocks
-  const fallingBlocks = level.fallingBlocks();
-  fallingBlocks.forEach( block => {
-    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
-      block.gravity = 50;
-      block.weight = 1;
-      if (block.velocity_Y < block.gravity) block.velocity_Y += block.weight;
-      player.velocity_Y = 0;
-      player.canJump = true;
-    }
-    block.Y += block.velocity_Y;
-  });
-
-  //Spring Blocks
-  const springBlocks = level.springBlocks();
-  springBlocks.forEach( block => {
-    if (player.isColliding(block) && player.Y + player.height < block.Y + player.velocity_Y) {
-      player.Y = block.Y - player.height;
-      player.velocity_Y = 0;
-      player.springJump = true;
-    }
-  });
-
-  //Jump
-  if (player.isJump && player.velocity_Y === 0 || player.isJump && player.canJump) {
-    player.velocity_Y = -4.5;
-    player.canJump = false;
-  }
-
-  //Spring Jump
-  if (player.springJump) {
-    player.velocity_Y = -7;
-    player.springJump = false;
-  }
-
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (logic);
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
-
-
-class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
+class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
   constructor(options) {
     super(options);
 
@@ -547,14 +748,10 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
     this.gravity = 100000;
     this.weight = 0.1;
     this.distance = 0;
-
     this.spriteAnimCounter = 0;
   }
 
   draw(graphics) {
-    // 1875
-    // 1250
-    // 47, 76,
     const frameWidth = 1875/15;
     const frameHeight = 1250/10;
     let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
@@ -600,246 +797,6 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */]
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Player);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
-
-
-const render = (graphics, level, player) => {
-  
-
-
-  // debugger
-  for (var i = 0; i < level.numBlocks(); i++) {
-    graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-  }
-  // graphics.drawImage(player.sprite, player.X, player.Y);
-  if (this.velocity_X === 0 && this.velocity_Y === 0) {
-
-  } else if (player.velocity_X !== 0) {
-    player.spriteAnimCounter += .2;
-  }
-  player.draw(graphics);
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (render);
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__key_events_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__level_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__render_js__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logic_js__ = __webpack_require__(3);
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  // const thanksWill = new Audio('assets/runaway.mp3');
-  // thanksWill.volume = .5;
-  // if (typeof thanksWill.loop == 'boolean')
-  // {
-  //     thanksWill.loop = true;
-  // }
-  // else
-  // {
-  //     thanksWill.addEventListener('ended', function() {
-  //         this.currentTime = 0;
-  //         this.play();
-  //     }, false);
-  // }
-  // thanksWill.play();
-
-
-  const gameCanvas = document.getElementById('canvas');
-  const graphics = gameCanvas.getContext('2d');
-  let gameStatus = true;
-
-
-
-  // Create Player
-  const playerCreation = {
-    img: "assets/grid-sprite.png",
-    x: 220,
-    y: 0,
-    width: 46,
-    height: 94
-  }
-  // height: 76 old height
-  let player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */](playerCreation);
-
-  //Create Level
-  let level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
-
-  function retry() {
-    gameCanvas.removeEventListener("click", retry, true);
-    player.velocity_X = 0;
-    player.Y = 0;
-    player.X = 220;
-    level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__level_js__["a" /* default */])();
-    for (var i = 0; i < level.numBlocks(); i++) {
-      graphics.drawImage(level.blocks[i].sprite, level.blocks[i].X, level.blocks[i].Y);
-    }
-    document.body.classList.toggle('death');
-    mainLoop();
-  }
-
-  const welcome = () => {
-    let base_image = new Image();
-    base_image.src = 'assets/start-game.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-
-    gameCanvas.addEventListener("click", splashControls, true);
-
-  }
-
-  function splashControls() {
-    gameCanvas.removeEventListener("click", splashControls, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-controls.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-
-    gameCanvas.addEventListener("click", splashIntro, true);
-  }
-
-  function splashIntro() {
-    gameCanvas.removeEventListener("click", splashIntro, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-crying-kim.png';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    setTimeout(mainLoop, 2000);
-  }
-
-  function splashRetry() {
-    document.body.classList.toggle('death');
-    // document.body.className = 'death';
-    // gameCanvas.removeEventListener("click", splashIntro, true);
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-    let base_image = new Image();
-    base_image.src = 'assets/splash-retry.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    // setTimeout(mainLoop, 2000);
-    gameCanvas.addEventListener("click", retry, true);
-  }
-
-
-  //Event Handler
-  __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__key_events_js__["a" /* keyEvents */])(player);
-
-
-  const ending = () => {
-    gameStatus = false;
-
-    let base_image = new Image();
-    base_image.src = 'assets/splash-ending.jpg';
-    base_image.onload = function(){
-      graphics.drawImage(base_image, 0, 0);
-    }
-    let credits_Y = 0;
-    const rollCredits = () => {
-      graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-        graphics.drawImage(base_image, 0, credits_Y);
-      // debugger
-      credits_Y -= .6;
-      setTimeout(rollCredits, 1000/60);
-    }
-
-    rollCredits();
-    // removeEvents();
-  }
-
-  //end game temp object
-  // const kanyeCreation = {
-  //   img: "assets/nightmare-kanye.png",
-  //   x: 600,
-  //   y: 350,
-  //   width: 49,
-  //   height: 47
-  // }
-  // let kanye = new gameObject(kanyeCreation);
-
-  const mainLoop = () => {
-    document.removeEventListener("click", mainLoop, true);
-    //Pre Variable Adjustments pan screen based on player
-    // kanye.X += -player.velocity_X;
-    level.blocks.forEach( block => {
-      block.X += -player.velocity_X;
-    });
-
-    player.Y += player.velocity_Y;
-
-    // if (player.isColliding(kanye)) {
-    //   ending();
-    // }
-
-    // Game Logic
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__logic_js__["a" /* default */])(player, level, gameStatus,frames );
-
-    //render graphics
-    graphics.clearRect( 0, 0, gameCanvas.width, gameCanvas.height);
-
-    // graphics.drawImage(kanye.sprite, kanye.X, kanye.Y);
-
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__render_js__["a" /* default */])(graphics, level, player);
-
-    var frames = setTimeout(mainLoop, 1000/60);
-
-    // Player Death
-    if (player.Y > 500) {
-      clearTimeout(frames);
-      splashRetry();
-      // mainLoop();
-    }
-  };
-  welcome();
-  // mainLoop();
-
-});
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_js__ = __webpack_require__(0);
-
-
-class Block extends __WEBPACK_IMPORTED_MODULE_0__object_js__["a" /* default */] {
-  constructor(options){
-    super(options);
-
-    this.type = options.type;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Block);
 
 
 /***/ })
