@@ -12,6 +12,7 @@
   * [Platform Generation](#platform-generation)
   * [Custom Sprites](#custom-sprites)
   * [Sprite Animation](#sprite-animation)
+  * [Music](#music)
 
 ## About
 Runaway's game mechanics are inspired by the classic platform side scroller Mario. The art and aesthetic is inspired by Kanye West's song 'Runaway' from the 'My Beautiful Dark Twisted Fantasy' album. You must reach the end to save Kim without falling off the platforms.
@@ -21,6 +22,10 @@ Runaway's game mechanics are inspired by the classic platform side scroller Mari
 - Running, jumping and game collision physics
 - Three types of platforms (Normal, Falling and Springs)
 - Custom Sprites
+
+### Technologies
+* HTML5 Canvas
+* Vanilla JavaScript
 
 ## Object Oriented Design
 All Objects in the game are based of this `gameObject` class. This gives every object the most important core properties.
@@ -98,7 +103,7 @@ This will generate 6 Regular Platform that touch side by side.
   });
 ````
 
-###Falling Platforms
+### Falling Platforms
 
 ![Falling Platforms](docs/falling.gif)
 
@@ -176,3 +181,8 @@ Sprites were drawn by hand using Nintendo's Paper Mario sprites as base.
   );
 ````
 I created the sprite sheet to be gridded perfectly so I could mathematically iterate through the frames. And then use the Modulo operator to repetitively animate. Sprite sheets do not have to be perfectly gridded, although I would need to put many precise static values for each and every sprite.
+
+
+## Music
+  - 'Runaway' Theme Song by [Will Johnson](https://github.com/willpjohnson)
+  - 'Through the Wire' Ending Song from [FreeMidi.org](https://freemidi.org/download-23349-through-the-wire-kanye-west)
