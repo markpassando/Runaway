@@ -1,5 +1,5 @@
 # Runaway
-[Live Link](http://markpassando.com/Runaway/)
+[Play the Game](http://markpassando.com/Runaway/)
 
 ![Runaway](docs/runaway.gif)
 
@@ -84,7 +84,7 @@ const generateBlock = (options) => {
 }
 ````
 
-**Regular Platform Example**
+### Regular Platforms
 This will generate 6 Regular Platform that touch side by side.
 ````js
   generateBlock({
@@ -98,9 +98,10 @@ This will generate 6 Regular Platform that touch side by side.
   });
 ````
 
+###Falling Platforms
+
 ![Falling Platforms](docs/falling.gif)
 
-**Falling Platform Example**
 This will generate a sequence of 3 falling platforms spaced apart by 200 X units.
 ````js
   generateBlock({
@@ -117,9 +118,10 @@ This will generate a sequence of 3 falling platforms spaced apart by 200 X units
   });
 ````
 
+### Spring Platforms
+
 ![Spring Platforms](docs/spring.gif)
 
-**Spring Platform Example**
 This will generate 2 spring platforms side by side.
 ````js
     generateBlock({
