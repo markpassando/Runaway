@@ -1,10 +1,12 @@
 # Runaway
 [Live Link](http://markpassando.com/Runaway/)
+
 ![Runaway](docs/runaway.gif)
 
 ## Contents
   * [About](#about)
   **Features**
+
   * [Object Oriented Design](#object-oriented-design)
   * [Platform Generation](#platform-generation)
   * [Custom Sprites](#custom-sprites)
@@ -128,9 +130,9 @@ This will generate 2 spring platforms side by side.
 ````
 ## Custom Sprites
 Sprites were drawn by hand using Nintendo's Paper Mario sprites as base.
-![Runaway](docs/walking.gif)
 
 ## Sprite Animation
+![Runaway](docs/walking.gif)
 ````js
   // Code snippet 1: Width & Height of sprite sheet.
   // Sets up variables for animation
