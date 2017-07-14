@@ -5,6 +5,7 @@
 
 ## Contents
   * [About](#about)
+
   **Features**
 
   * [Object Oriented Design](#object-oriented-design)
@@ -97,6 +98,8 @@ This will generate 6 Regular Platform that touch side by side.
   });
 ````
 
+![Falling Platforms](docs/falling.gif)
+
 **Falling Platform Example**
 This will generate a sequence of 3 falling platforms spaced apart by 200 X units.
 ````js
@@ -113,6 +116,8 @@ This will generate a sequence of 3 falling platforms spaced apart by 200 X units
     num: 3
   });
 ````
+
+![Spring Platforms](docs/spring.gif)
 
 **Spring Platform Example**
 This will generate 2 spring platforms side by side.
