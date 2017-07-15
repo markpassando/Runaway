@@ -23,9 +23,10 @@ Runaway's game mechanics are inspired by the classic platform side scroller Mari
 - Three types of platforms (Normal, Falling and Springs)
 - Custom Sprites
 
-### Technologies
+### Technologies Used
 * HTML5 Canvas
 * Vanilla JavaScript
+* Adobe Photoshop
 
 ## Object Oriented Design
 All Objects in the game are based of this `gameObject` class. This gives every object the most important core properties.
@@ -141,7 +142,10 @@ This will generate 2 spring platforms side by side.
      });
 ````
 ## Custom Sprites
-Sprites were drawn by hand using Nintendo's Paper Mario sprites as base.
+
+![Kanye Sprite](docs/custom.png)
+
+Sprites were customized by hand using [HyperSonic92's](https://www.spriters-resource.com/submitter/HyperSonic92/) Paper Mario sprites as base.
 
 ## Sprite Animation
 ![Runaway](docs/walking.gif)
