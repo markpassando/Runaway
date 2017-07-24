@@ -110,13 +110,16 @@ class gameObject {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bullet_js__ = __webpack_require__(7);
+
 
 
 
 class Level {
   constructor() {
-    this.blocks = new Array ();
-
+    this.blocks = new Array();
+    this.enemies = new Array();
+    this.maxEnemies = 3;
     // this.blocks = this.blocks.bind(this);
   }
 
@@ -139,13 +142,25 @@ class Level {
   springBlocks() {
     return this.blocks.filter(block => block.type === "spring");
   }
+
+  generateEnemies() {
+    while (this.enemies.length < this.maxEnemies) {
+      this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]());
+    }
+  };
+
+  updateEnemies() {
+    this.enemies.forEach(enemy => {
+      enemy.update();
+    })
+  }
 }
 
 const generateBlock = (options) => {
   let defaultOptions = {
     type: "platform",
     num: 1,
-    space: null
+    space: 0
   };
   let newOptions = Object.assign(defaultOptions, options);
 
@@ -164,7 +179,7 @@ const generateBlock = (options) => {
 
     totalWidth += width + space
   }
-}
+};
 
 // Create Level One
 const generateLevelOne = () => {
@@ -175,7 +190,7 @@ const generateLevelOne = () => {
     img: "assets/platform.png",
     num: 6,
     x: 96,
-    y: 400,
+    y: 405,
     width: 96,
     height: 11
   });
@@ -524,9 +539,18 @@ class Game {
       width: 48,
       height: 121
     });
+
+
+    this.enemies = this.level.enemies;
+    this.level.generateEnemies();
+
   }
 
 update() {
+  this.enemies.forEach(enemy => {
+    enemy.X += -this.player.velocity_X;
+  });
+
   // Kim
   this.kim.X += -this.player.velocity_X;
   // Blocks
@@ -540,10 +564,21 @@ render() {
   // Clear canvas
   this.graphics.clearRect( 0, 0, this.gameCanvas.width, this.gameCanvas.height);
 
+  // Render Life Bar
+  for (var i = 0; i < this.player.lives; i++) {
+    let base_image = new Image();
+    base_image.src = 'assets/heart.png';
+    this.graphics.drawImage(base_image, (i * 50) + 10, 10);
+  }
   // Render All blocks
   for (var i = 0; i < this.level.numBlocks(); i++) {
     this.graphics.drawImage(this.level.blocks[i].sprite, this.level.blocks[i].X, this.level.blocks[i].Y);
   }
+
+  // Render Enemies
+  this.enemies.forEach(enemy => {
+    this.graphics.drawImage(enemy.sprite, enemy.X, enemy.Y);
+  })
 
   // Draw Kim
   this.graphics.drawImage(this.kim.sprite, this.kim.X, this.kim.Y);
@@ -603,9 +638,11 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     this.canJump = false;
     this.springJump = false;
     this.gravity = 100000;
-    this.weight = 0.1;
+    this.weight = 0.3;
     this.distance = 0;
     this.spriteAnimCounter = 0;
+
+    this.lives = 4;
 
     this.update = this.update.bind(this);
   }
@@ -717,8 +754,8 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
   update(level) {
     //Move Left & Right
-    if (this.isLeft) this.velocity_X = -3;
-    if (this.isRight) this.velocity_X = 3;
+    if (this.isLeft) this.velocity_X = -4;
+    if (this.isRight) this.velocity_X = 4;
     this.distance += this.velocity_X;
 
     // Stand on Platform
@@ -737,12 +774,26 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
       }
     });
 
+    // Bullets
+    const enemies = level.enemies;
+    enemies.forEach( enemy => {
+      if (this.isColliding(enemy) && this.Y + this.height < enemy.Y + this.velocity_Y) {
+        this.Y = enemy.Y - this.height;
+        this.velocity_Y = 0;
+        this.X += 1;
+      } else if (this.isColliding(enemy)){
+        enemy.reset();
+        this.lives -= 1;
+        console.log(this.lives);
+      }
+    });
+
     //Falling Blocks
     const fallingBlocks = level.fallingBlocks();
     fallingBlocks.forEach( block => {
       if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
         block.gravity = 50;
-        block.weight = 1;
+        block.weight = 2.5;
         if (block.velocity_Y < block.gravity) block.velocity_Y += block.weight;
         this.velocity_Y = 0;
         this.canJump = true;
@@ -762,13 +813,13 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
     //Jump
     if (this.isJump && this.velocity_Y === 0 || this.isJump && this.canJump) {
-      this.velocity_Y = -4.5;
+      this.velocity_Y = -7.75;
       this.canJump = false;
     }
 
     //Spring Jump
     if (this.springJump) {
-      this.velocity_Y = -7;
+      this.velocity_Y = -12;
       this.springJump = false;
     }
   }
@@ -939,6 +990,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function retry() {
     game.gameCanvas.removeEventListener("click", retry, true);
     // Reset Player
+    game.player.lives = 5;
     game.player.velocity_X = 0;
     game.player.Y = 0;
     game.player.X = 220;
@@ -956,6 +1008,11 @@ document.addEventListener("DOMContentLoaded", () => {
     for (var i = 0; i < game.level.numBlocks(); i++) {
       game.graphics.drawImage(game.level.blocks[i].sprite, game.level.blocks[i].X, game.level.blocks[i].Y);
     }
+
+    // Reset Enemies
+    game.enemies = game.level.enemies;
+    game.level.generateEnemies();
+
     document.body.classList.toggle('death');
 
     mainLoop();
@@ -969,6 +1026,7 @@ document.addEventListener("DOMContentLoaded", () => {
     game.update();
     // Game Logic
     game.player.update(game.level);
+    game.level.updateEnemies(game);
 
     // Render Game
     game.render();
@@ -989,12 +1047,114 @@ document.addEventListener("DOMContentLoaded", () => {
       clearTimeout(frames);
       splashRetry();
     }
+
+    // Player Death
+    if (game.player.lives === 0) {
+      clearTimeout(frames);
+      splashRetry();
+    }
   };
 
   // Starts game
   welcome();
 
 });
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+
+
+class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor() {
+    super({img: "assets/bullet.png",
+    width: 58,
+    height: 48});
+
+    this.weight = 58;
+    this.height = 48;
+    this.X = this.randomX();
+    this.Y = this.randomY();
+    this.isLeft = true;
+    this.isRight = false;
+    this.gravity = 20;
+    this.weight = 0.1;
+    this.spriteAnimCounter = 0;
+
+  }
+
+  randomX() {
+    return (Math.floor(Math.random() * (5 - 1 + 1)) + 1) * 50 + 900
+  }
+
+  randomY() {
+    return (Math.floor(Math.random() * (8 - 2 + 1)) + 2) * 50
+  }
+
+  reset() {
+    this.X = this.randomX();
+    this.Y = this.randomY();
+  }
+
+  draw(graphics) {
+    const frameWidth = 1875/15;
+    const frameHeight = 1250/10;
+    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
+    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
+
+    let actionStatus = 0;
+    let frameStatus = 0;
+    if (this.velocity_X === 0 && this.velocity_Y === 0) {
+      // standing
+      actionStatus = 0;
+      frameStatus = 0;
+      // frameStatus = standingMod;
+    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
+      // jumping
+      actionStatus = 250;
+      frameStatus = 0;
+    } else if (this.velocity_X !== 0) {
+      // walking
+      actionStatus = 125;
+      frameStatus = walkingMod;
+    }
+
+    // Rotate sprites if going left
+    let playerXCoord = this.X - 43;
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+      playerXCoord = -playerXCoord - 125;
+    }
+
+    graphics.drawImage(this.sprite,
+      frameStatus * frameWidth, actionStatus,
+      frameWidth, frameHeight,
+      playerXCoord, this.Y,
+      125, 125
+    );
+
+    // Rotate sprites back
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+    }
+  }
+
+  update() {
+    //Move Left & Right
+    this.X -= 3;
+
+    if (this.X <= -60) {
+      this.reset();
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Bullet);
 
 
 /***/ })
