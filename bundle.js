@@ -148,7 +148,9 @@ class Level {
 
 	generateEnemies() {
 		while (this.enemies.length < this.maxEnemies) {
-			this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]());
+			this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]({img: "assets/bullet.png",
+      width: 58,
+      height: 48}));
 		}
 	};
 
@@ -1189,10 +1191,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
-  constructor() {
-    super({img: "assets/bullet.png",
-    width: 58,
-    height: 48});
+  constructor(options) {
+    super(options);
 
     this.weight = 58;
     this.height = 48;
@@ -1288,7 +1288,6 @@ class Consumable extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* def
   constructor(options) {
     super(options);
     this.type = options.type;
-
   }
 
   randomX() {
