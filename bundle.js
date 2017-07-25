@@ -111,387 +111,486 @@ class gameObject {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bullet_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__consumable_js__ = __webpack_require__(8);
+
 
 
 
 
 class Level {
-  constructor() {
-    this.blocks = new Array();
-    this.enemies = new Array();
-    this.maxEnemies = 3;
-    // this.blocks = this.blocks.bind(this);
-  }
+	constructor() {
+		this.blocks = new Array();
+		this.consumables = new Array();
+		this.enemies = new Array();
+		this.maxEnemies = 3;
+		// this.blocks = this.blocks.bind(this);
+	}
 
-  clear() {
-    return this.blocks = [];
-  }
+	clear() {
+		return this.blocks = [];
+	}
 
-  numBlocks() {
-    return this.blocks.length;
-  }
+	numBlocks() {
+		return this.blocks.length;
+	}
 
-  platformBlocks() {
-    return this.blocks.filter(block => block.type === "platform");
-  }
+	platformBlocks() {
+		return this.blocks.filter(block => block.type === "platform");
+	}
 
-  fallingBlocks() {
-    return this.blocks.filter(block => block.type === "falling");
-  }
+	fallingBlocks() {
+		return this.blocks.filter(block => block.type === "falling");
+	}
 
-  springBlocks() {
-    return this.blocks.filter(block => block.type === "spring");
-  }
+	springBlocks() {
+		return this.blocks.filter(block => block.type === "spring");
+	}
 
-  generateEnemies() {
-    while (this.enemies.length < this.maxEnemies) {
-      this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]());
-    }
-  };
+	generateEnemies() {
+		while (this.enemies.length < this.maxEnemies) {
+			this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]());
+		}
+	};
 
-  updateEnemies() {
-    this.enemies.forEach(enemy => {
-      enemy.update();
-    })
-  }
+	updateEnemies() {
+		this.enemies.forEach(enemy => {
+			enemy.update();
+		})
+	}
+
+	generateConsumables() {
+		Object.keys(CONSUMABLES).forEach(el => {
+			this.consumables.push(new __WEBPACK_IMPORTED_MODULE_3__consumable_js__["a" /* default */](CONSUMABLES[el]));
+		});
+	}
 }
 
+const CONSUMABLES = {
+	"1": {
+		img: "assets/food.png",
+		type: "health",
+		x: 500,
+		y: 180,
+		width: 29,
+		height: 22
+	},
+	"2": {
+		img: "assets/food.png",
+		type: "health",
+		x: 2950,
+		y: 100,
+		width: 29,
+		height: 22
+	},
+	"3": {
+		img: "assets/food.png",
+		type: "health",
+		x: 4350,
+		y: 100,
+		width: 29,
+		height: 22
+	},
+	"4": {
+		img: "assets/food.png",
+		type: "health",
+		x: 4600,
+		y: 100,
+		width: 29,
+		height: 22
+	},
+	"5": {
+		img: "assets/food.png",
+		type: "health",
+		x: 5000,
+		y: 150,
+		width: 29,
+		height: 22
+	},
+	"6": {
+		img: "assets/food.png",
+		type: "health",
+		x: 5300,
+		y: 150,
+		width: 29,
+		height: 22
+	}
+};
+
 const generateBlock = (options) => {
-  let defaultOptions = {
-    type: "platform",
-    num: 1,
-    space: 0
-  };
-  let newOptions = Object.assign(defaultOptions, options);
+	let defaultOptions = {
+		type: "platform",
+		num: 1,
+		space: 0
+	};
+	let newOptions = Object.assign(defaultOptions, options);
 
-  const { level, num, img, x, y, width, height, type, space } = newOptions;
+	const {
+		level,
+		num,
+		img,
+		x,
+		y,
+		width,
+		height,
+		type,
+		space
+	} = newOptions;
 
-  let totalWidth = 0;
-  for (var i = 1; i <= num; i++) {
-    level.blocks.push(new __WEBPACK_IMPORTED_MODULE_1__block_js__["a" /* default */]({
-      img: img,
-      x: x + (totalWidth),
-      y: y,
-      width: width,
-      height: height,
-      type: type
-    }));
+	let totalWidth = 0;
+	for (var i = 1; i <= num; i++) {
+		level.blocks.push(new __WEBPACK_IMPORTED_MODULE_1__block_js__["a" /* default */]({
+			img: img,
+			x: x + (totalWidth),
+			y: y,
+			width: width,
+			height: height,
+			type: type
+		}));
 
-    totalWidth += width + space
-  }
+		totalWidth += width + space
+	}
 };
 
 // Create Level One
 const generateLevelOne = () => {
-  const levelOne = new Level();
-  //flat stage
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    num: 6,
-    x: 96,
-    y: 405,
-    width: 96,
-    height: 11
-  });
+	const levelOne = new Level();
+	//flat stage
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 6,
+		x: 96,
+		y: 405,
+		width: 96,
+		height: 11
+	});
 
-  // first fall
-  generateBlock({
-    level: levelOne,
-    img: "assets/falling-platform.png",
-    num: 1,
-    x: 768,
-    y: 325,
-    width: 96,
-    height: 11,
-    type: "falling"
-  });
+	// Food
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 1,
+		x: 300,
+		y: 325,
+		width: 96,
+		height: 11,
+	});
 
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 768,
+		y: 325,
+		width: 96,
+		height: 11,
+		type: "falling"
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 2,
+		x: 875,
+		y: 425,
+		width: 96,
+		height: 11
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		x: 1200,
+		y: 405,
+		width: 96,
+		height: 11,
+		num: 2
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 2,
+		x: 1460,
+		y: 325,
+		width: 96,
+		height: 11
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		x: 1300,
+		y: 260,
+		width: 96,
+		height: 11
+	});
+
+	//flat stage
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 6,
+		x: 1460,
+		y: 160,
+		width: 96,
+		height: 11
+	});
+
+	// springs
+	generateBlock({
+		level: levelOne,
+		img: "assets/spring.png",
+		x: 2200,
+		y: 420,
+		width: 60,
+		height: 78,
+		type: "spring",
+		num: 2
+	});
+
+	// flat platform
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		x: 2400,
+		y: 260,
+		width: 96,
+		height: 11,
+		num: 2
+	});
+
+	// springs
+	generateBlock({
+		level: levelOne,
+		img: "assets/spring.png",
+		x: 2700,
+		y: 420,
+		width: 60,
+		height: 78,
+		type: "spring",
+		num: 2
+	});
+
+	// fall sequence
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 2900,
+		y: 215,
+		width: 96,
+		height: 11,
+		type: "falling"
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 3050,
+		y: 275,
+		width: 96,
+		height: 11,
+		type: "falling"
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 3200,
+		y: 360,
+		width: 96,
+		height: 11,
+		type: "falling"
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 2,
+		x: 3330,
+		y: 425,
+		width: 96,
+		height: 11
+	});
+
+	//falling to spring
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 3600,
+		y: 410,
+		width: 96,
+		height: 11,
+		type: "falling"
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/spring.png",
+		num: 1,
+		x: 3800,
+		y: 420,
+		width: 60,
+		height: 78,
+		type: "spring"
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 2,
+		x: 3900,
+		y: 225,
+		width: 96,
+		height: 11
+	});
+
+	// Falling area
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 4200,
+		y: 260,
+		width: 96,
+		height: 11,
+		type: "falling",
+		space: 170,
+		num: 3
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 1,
+		x: 4700,
+		y: 485,
+		width: 96,
+		height: 11,
+	});
+
+	generateBlock({
+		level: levelOne,
+		img: "assets/spring.png",
+		x: 4900,
+		y: 420,
+		width: 60,
+		height: 78,
+		type: "spring",
+		num: 3,
+		space: 250
+	});
+
+	// after spring
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		x: 5800,
+		y: 480,
+		width: 96,
+		height: 11,
     num: 2,
-    x: 875,
-    y: 425,
-    width: 96,
-    height: 11
-  });
+    space: 200
+	});
 
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    x: 1200,
-    y: 400,
-    width: 96,
-    height: 11,
-    num: 2
-  });
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		x: 5950,
+		y: 380,
+		width: 96,
+		height: 11,
+	});
 
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    num: 2,
-    x: 1460,
-    y: 325,
-    width: 96,
-    height: 11
-  });
+	generateBlock({
+		level: levelOne,
+		img: "assets/spring.png",
+		x: 6200,
+		y: 420,
+		width: 60,
+		height: 78,
+		type: "spring",
+	});
 
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    x: 1300,
-    y: 250,
-    width: 96,
-    height: 11
-  });
+	// +300
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 6400,
+		y: 360,
+		width: 96,
+		height: 11,
+		type: "falling",
+	});
+	//
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 1,
+		x: 6600,
+		y: 310,
+		width: 96,
+		height: 11
+	});
 
-  //flat stage
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    num: 6,
-    x: 1460,
-    y: 150,
-    width: 96,
-    height: 11
-  });
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 3,
+		x: 6800,
+		y: 260,
+		width: 96,
+		height: 11
+	});
 
-  // springs
-  generateBlock({
-   level: levelOne,
-   img: "assets/spring.png",
-   x: 2200,
-   y: 420,
-   width: 60,
-   height: 78,
-   type: "spring",
-   num: 2
- });
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		x: 6900,
+		y: 160,
+		width: 96,
+		height: 11
+	});
 
-// flat platform
- generateBlock({
-   level: levelOne,
-   img: "assets/platform.png",
-   x: 2400,
-   y: 250,
-   width: 96,
-   height: 11,
-   num: 2
- });
+	generateBlock({
+		level: levelOne,
+		img: "assets/falling-platform.png",
+		num: 1,
+		x: 7088,
+		y: 260,
+		width: 96,
+		height: 11,
+		type: "falling"
+	});
 
- // springs
- generateBlock({
-  level: levelOne,
-  img: "assets/spring.png",
-  x: 2700,
-  y: 420,
-  width: 60,
-  height: 78,
-  type: "spring",
-  num: 2
-});
+	generateBlock({
+		level: levelOne,
+		img: "assets/spring.png",
+		num: 1,
+		x: 7400,
+		y: 420,
+		width: 60,
+		height: 78,
+		type: "spring"
+	});
 
-// fall sequence
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  num: 1,
-  x: 2900,
-  y: 200,
-  width: 96,
-  height: 11,
-  type: "falling"
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  num: 1,
-  x: 3050,
-  y: 275,
-  width: 96,
-  height: 11,
-  type: "falling"
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  num: 1,
-  x: 3200,
-  y: 350,
-  width: 96,
-  height: 11,
-  type: "falling"
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  num: 2,
-  x: 3330,
-  y: 425,
-  width: 96,
-  height: 11
-});
-
-//falling to spring
-generateBlock({
-  level: levelOne,
-  img: "assets/falling-platform.png",
-  num: 1,
-  x: 3600,
-  y: 400,
-  width: 96,
-  height: 11,
-  type: "falling"
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/spring.png",
-  num: 1,
-  x: 3800,
-  y: 420,
-  width: 60,
-  height: 78,
-  type: "spring"
-});
-
-generateBlock({
-  level: levelOne,
-  img: "assets/platform.png",
-  num: 2,
-  x: 3900,
-  y: 225,
-  width: 96,
-  height: 11
-});
-
-
-
-  // Falling area
-  generateBlock({
-    level: levelOne,
-    img: "assets/falling-platform.png",
-    num: 1,
-    x: 4200,
-    y: 250,
-    width: 96,
-    height: 11,
-    type: "falling",
-    space: 200,
-    num: 3
-  });
-
-  generateBlock({
-    level: levelOne,
-    img: "assets/spring.png",
-    x: 5000,
-    y: 420,
-    width: 60,
-    height: 78,
-    type: "spring",
-    num: 3,
-    space: 350
-  });
-
-  // after spring
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    x: 6000,
-    y: 480,
-    width: 96,
-    height: 11
-  });
-
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    x: 6200,
-    y: 480,
-    width: 96,
-    height: 11
-  });
-
-  generateBlock({
-    level: levelOne,
-    img: "assets/spring.png",
-    x: 6400,
-    y: 420,
-    width: 60,
-    height: 78,
-    type: "spring",
-  });
-
-  // +300
-  generateBlock({
-    level: levelOne,
-    img: "assets/falling-platform.png",
-    num: 1,
-    x: 6600,
-    y: 350,
-    width: 96,
-    height: 11,
-    type: "falling",
-  });
-  //
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    num: 1,
-    x: 6800,
-    y: 300,
-    width: 96,
-    height: 11
-  });
-
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    num: 3,
-    x: 7000,
-    y: 250,
-    width: 96,
-    height: 11
-  });
-
-  generateBlock({
-    level: levelOne,
-    img: "assets/falling-platform.png",
-    num: 1,
-    x: 7296,
-    y: 250,
-    width: 96,
-    height: 11,
-    type: "falling"
-  });
-
-  generateBlock({
-    level: levelOne,
-    img: "assets/spring.png",
-    num: 1,
-    x: 7600,
-    y: 420,
-    width: 60,
-    height: 78,
-    type: "spring"
-  });
-
-  //flat stage
-  generateBlock({
-    level: levelOne,
-    img: "assets/platform.png",
-    num: 10,
-    x: 7800,
-    y: 400,
-    width: 96,
-    height: 11
-  });
-// debugger
-  return levelOne;
+	//flat stage
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 10,
+		x: 7600,
+		y: 425,
+		width: 96,
+		height: 11
+	});
+	// debugger
+	return levelOne;
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (generateLevelOne);
@@ -519,7 +618,7 @@ class Game {
     this.level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__level_js__["a" /* default */])();
     this.player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */]({
       img: "assets/grid-sprite.png",
-      x: 220,
+      x: 120,
       y: 0,
       width: 46,
       height: 94
@@ -534,23 +633,26 @@ class Game {
     // y: 280,
     this.kim = new __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */]({
       img: "assets/kim.png",
-      x: 8500,
-      y: 280,
+      x: 8400,
+      y: 305,
       width: 48,
       height: 121
     });
 
-
+    // Create Enemies
     this.enemies = this.level.enemies;
     this.level.generateEnemies();
+    this.level.generateConsumables();
 
   }
 
 update() {
-  this.enemies.forEach(enemy => {
-    enemy.X += -this.player.velocity_X;
-  });
+  // Move Objects according to player
 
+  // Enemies
+  this.enemies.forEach(enemy => enemy.X += -this.player.velocity_X);
+  // Consumables
+  this.level.consumables.forEach(consumable => consumable.X += -this.player.velocity_X);
   // Kim
   this.kim.X += -this.player.velocity_X;
   // Blocks
@@ -570,7 +672,8 @@ render() {
     base_image.src = 'assets/heart.png';
     this.graphics.drawImage(base_image, (i * 50) + 10, 10);
   }
-  // Render All blocks
+
+  // Render All Blocks
   for (var i = 0; i < this.level.numBlocks(); i++) {
     this.graphics.drawImage(this.level.blocks[i].sprite, this.level.blocks[i].X, this.level.blocks[i].Y);
   }
@@ -578,6 +681,11 @@ render() {
   // Render Enemies
   this.enemies.forEach(enemy => {
     this.graphics.drawImage(enemy.sprite, enemy.X, enemy.Y);
+  })
+
+  // Render Consumables
+  this.level.consumables.forEach(consumable => {
+    this.graphics.drawImage(consumable.sprite, consumable.X, consumable.Y);
   })
 
   // Draw Kim
@@ -642,7 +750,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     this.distance = 0;
     this.spriteAnimCounter = 0;
 
-    this.lives = 4;
+    this.lives = 5;
 
     this.update = this.update.bind(this);
   }
@@ -775,8 +883,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     });
 
     // Bullets
-    const enemies = level.enemies;
-    enemies.forEach( enemy => {
+    level.enemies.forEach( enemy => {
       if (this.isColliding(enemy) && this.Y + this.height < enemy.Y + this.velocity_Y) {
         this.Y = enemy.Y - this.height;
         this.velocity_Y = 0;
@@ -784,9 +891,20 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
       } else if (this.isColliding(enemy)){
         enemy.reset();
         this.lives -= 1;
-        console.log(this.lives);
       }
     });
+
+    // Consumables
+    let i = 0;
+    while (i < level.consumables.length){
+      if (this.isColliding(level.consumables[i])) {
+        if (this.lives < 6) {
+          this.lives += 1;
+          level.consumables.splice(i, 1)
+        }
+      }
+      i++;
+    }
 
     //Falling Blocks
     const fallingBlocks = level.fallingBlocks();
@@ -993,7 +1111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     game.player.lives = 5;
     game.player.velocity_X = 0;
     game.player.Y = 0;
-    game.player.X = 220;
+    game.player.X = 120;
 
     // Testing vars
     // game.kim.Y = 280;
@@ -1012,6 +1130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Reset Enemies
     game.enemies = game.level.enemies;
     game.level.generateEnemies();
+    game.level.generateConsumables();
 
     document.body.classList.toggle('death');
 
@@ -1088,7 +1207,7 @@ class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
   }
 
   randomX() {
-    return (Math.floor(Math.random() * (5 - 1 + 1)) + 1) * 50 + 900
+    return (Math.floor(Math.random() * (9 - 1 + 1)) + 1) * 50 + 900
   }
 
   randomY() {
@@ -1155,6 +1274,91 @@ class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Bullet);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+
+
+class Consumable extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor(options) {
+    super(options);
+    this.type = options.type;
+
+  }
+
+  randomX() {
+    return (Math.floor(Math.random() * (5 - 1 + 1)) + 1) * 50 + 900
+  }
+
+  randomY() {
+    return (Math.floor(Math.random() * (8 - 2 + 1)) + 2) * 50
+  }
+
+  reset() {
+    this.X = this.randomX();
+    this.Y = this.randomY();
+  }
+
+  draw(graphics) {
+    const frameWidth = 1875/15;
+    const frameHeight = 1250/10;
+    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
+    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
+
+    let actionStatus = 0;
+    let frameStatus = 0;
+    if (this.velocity_X === 0 && this.velocity_Y === 0) {
+      // standing
+      actionStatus = 0;
+      frameStatus = 0;
+      // frameStatus = standingMod;
+    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
+      // jumping
+      actionStatus = 250;
+      frameStatus = 0;
+    } else if (this.velocity_X !== 0) {
+      // walking
+      actionStatus = 125;
+      frameStatus = walkingMod;
+    }
+
+    // Rotate sprites if going left
+    let playerXCoord = this.X - 43;
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+      playerXCoord = -playerXCoord - 125;
+    }
+
+    graphics.drawImage(this.sprite,
+      frameStatus * frameWidth, actionStatus,
+      frameWidth, frameHeight,
+      playerXCoord, this.Y,
+      125, 125
+    );
+
+    // Rotate sprites back
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+    }
+  }
+
+  update() {
+    //Move Left & Right
+    this.X -= 3;
+
+    if (this.X <= -60) {
+      this.reset();
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Consumable);
 
 
 /***/ })
