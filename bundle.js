@@ -123,7 +123,6 @@ class Level {
 		this.consumables = new Array();
 		this.enemies = new Array();
 		this.maxEnemies = 3;
-		// this.blocks = this.blocks.bind(this);
 	}
 
 	clear() {
@@ -167,12 +166,12 @@ class Level {
 
 const CONSUMABLES = {
 	"1": {
-		img: "assets/heart-small.png",
-		type: "health",
+		img: "assets/mic.png",
+		type: "mic",
 		x: 500,
 		y: 180,
-		width: 26,
-		height: 24
+		width: 17,
+		height: 35
 	},
 	"2": {
 		img: "assets/heart-small.png",
@@ -183,12 +182,12 @@ const CONSUMABLES = {
 		height: 24
 	},
 	"3": {
-		img: "assets/heart-small.png",
-		type: "health",
+		img: "assets/mic.png",
+		type: "mic",
 		x: 4350,
 		y: 100,
-		width: 26,
-		height: 24
+		width: 17,
+		height: 35
 	},
 	"4": {
 		img: "assets/heart-small.png",
@@ -199,12 +198,12 @@ const CONSUMABLES = {
 		height: 24
 	},
 	"5": {
-		img: "assets/heart-small.png",
-		type: "health",
+		img: "assets/mic.png",
+		type: "mic",
 		x: 5000,
 		y: 150,
-		width: 26,
-		height: 24
+		width: 17,
+		height: 35
 	},
 	"6": {
 		img: "assets/heart-small.png",
@@ -654,7 +653,7 @@ update() {
   this.enemies.forEach(enemy => enemy.X += -this.player.velocity_X);
   // Consumables
   this.level.consumables.forEach(consumable => consumable.X += -this.player.velocity_X);
-  // effects
+  // Effects
   this.effects.forEach(fx => fx.X += -this.player.velocity_X);
   // Kim
   this.kim.X += -this.player.velocity_X;
@@ -703,7 +702,7 @@ render() {
     this.player.spriteAnimCounter += .2;
   }
 
-
+  // Effects Sprites
   this.effects.forEach( fx => {
     fx.draw(this.graphics);
     fx.spriteAnimCounter += .31;
@@ -1025,7 +1024,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
           enemy.reset();
           setTimeout(function(){ game.effects.shift() }, 1000);
-        // this.lives -= 1;
+        this.lives -= 1;
       }
     });
 
@@ -1033,11 +1032,35 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     let i = 0;
     while (i < game.level.consumables.length){
       if (this.isColliding(game.level.consumables[i])) {
-        if (this.lives < 6) {
-          this.lives += 1;
-          game.level.consumables.splice(i, 1)
+        switch (game.level.consumables[i].type) {
+          case "health":
+              if (this.lives < 6) {
+                this.lives += 1;
+                game.level.consumables.splice(i, 1)
+              }
+            break;
+
+          case "mic":
+            game.level.consumables.splice(i, 1)
+            game.level.enemies.forEach(enemy => {
+              game.effects.push(new __WEBPACK_IMPORTED_MODULE_1__effects_js__["a" /* default */]({
+                img: "assets/explosion.png",
+                x: enemy.X,
+                y: enemy.Y,
+                width: 55,
+                height: 32
+              }));
+
+              enemy.reset();
+              setTimeout(function(){ game.effects.shift() }, 1000);
+            });
+            break;
+
+          default:
+
         }
       }
+
       i++;
     }
 
