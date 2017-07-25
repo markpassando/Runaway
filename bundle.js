@@ -709,7 +709,7 @@ class Game {
       //Draw Player
       this.player.draw(this.graphics);
   }
-  
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -817,9 +817,11 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
     this.isLeft = false;
     this.isRight = false;
+    this.isDuck = false;
     this.isJump = false;
     this.canJump = false;
     this.springJump = false;
+    this.direction = "right";
     this.gravity = 100000;
     this.weight = 0.3;
     this.distance = 0;
@@ -850,6 +852,11 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
           case 40:
           case 83:
             //  down
+            // if (this.isDuck === false) {
+            //   this.height -= 20;
+            //   this.Y += 20;
+            //   this.isDuck = true;
+            // }
             break
           case 39:
           case 68:
@@ -877,6 +884,11 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
         case 40:
         case 83:
           //  down
+          // if (this.isDuck === true) {
+          //   this.height += 20;
+          //   this.Y -= 20;
+          //   this.isDuck = false;
+          // }
           break
 
         case 39:
@@ -900,7 +912,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
     let actionStatus = 0;
     let frameStatus = 0;
-    if (this.velocity_X === 0 && this.velocity_Y === 0) {
+    if (this.velocity_X === 0 && this.velocity_Y === 0 && this.isDuck === false) {
       // standing
       actionStatus = 0;
       frameStatus = 0;
@@ -913,11 +925,15 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
       // walking
       actionStatus = 125;
       frameStatus = walkingMod;
+    } else if (this.isDuck) {
+      // ducking
+      actionStatus = 375;
+      frameStatus = 0;
     }
 
     // Rotate sprites if going left
     let playerXCoord = this.X - 43;
-    if (this.velocity_X < 0) {
+    if (this.direction === "left") {
       graphics.scale(-1, 1);
       playerXCoord = -playerXCoord - 125;
     }
@@ -930,15 +946,22 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     );
 
     // Rotate sprites back
-    if (this.velocity_X < 0) {
+    if (this.direction === "left") {
       graphics.scale(-1, 1);
     }
   }
 
   update(game) {
     //Move Left & Right
-    if (this.isLeft) this.velocity_X = -4;
-    if (this.isRight) this.velocity_X = 4;
+    if (this.isLeft) {
+      this.velocity_X = -4;
+      this.direction = "left";
+    }
+    if (this.isRight) {
+      this.velocity_X = 4;
+      this.direction = "right";
+    }
+
     this.distance += this.velocity_X;
 
     // Stand on Platform
