@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -110,8 +110,8 @@ class gameObject {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__block_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bullet_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__consumable_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bullet_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__consumable_js__ = __webpack_require__(5);
 
 
 
@@ -148,9 +148,7 @@ class Level {
 
 	generateEnemies() {
 		while (this.enemies.length < this.maxEnemies) {
-			this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]({img: "assets/bullet.png",
-      width: 58,
-      height: 48}));
+			this.enemies.push(new __WEBPACK_IMPORTED_MODULE_2__bullet_js__["a" /* default */]());
 		}
 	};
 
@@ -169,52 +167,52 @@ class Level {
 
 const CONSUMABLES = {
 	"1": {
-		img: "assets/food.png",
+		img: "assets/heart-small.png",
 		type: "health",
 		x: 500,
 		y: 180,
-		width: 29,
-		height: 22
+		width: 26,
+		height: 24
 	},
 	"2": {
-		img: "assets/food.png",
+		img: "assets/heart-small.png",
 		type: "health",
 		x: 2950,
 		y: 100,
-		width: 29,
-		height: 22
+		width: 26,
+		height: 24
 	},
 	"3": {
-		img: "assets/food.png",
+		img: "assets/heart-small.png",
 		type: "health",
 		x: 4350,
 		y: 100,
-		width: 29,
-		height: 22
+		width: 26,
+		height: 24
 	},
 	"4": {
-		img: "assets/food.png",
+		img: "assets/heart-small.png",
 		type: "health",
 		x: 4600,
 		y: 100,
-		width: 29,
-		height: 22
+		width: 26,
+		height: 24
 	},
 	"5": {
-		img: "assets/food.png",
+		img: "assets/heart-small.png",
 		type: "health",
 		x: 5000,
 		y: 150,
-		width: 29,
-		height: 22
+		width: 26,
+		height: 24
 	},
 	"6": {
-		img: "assets/food.png",
+		img: "assets/heart-small.png",
 		type: "health",
 		x: 5300,
 		y: 150,
-		width: 29,
-		height: 22
+		width: 26,
+		height: 24
 	}
 };
 
@@ -604,9 +602,9 @@ const generateLevelOne = () => {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__level_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sounds_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sounds_js__ = __webpack_require__(7);
 
 
 
@@ -617,6 +615,7 @@ class Game {
     this.gameCanvas = document.getElementById('canvas');
     this.graphics = this.gameCanvas.getContext('2d');
     this.sounds = new __WEBPACK_IMPORTED_MODULE_3__sounds_js__["a" /* default */]();
+    this.effects = [];
     this.level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__level_js__["a" /* default */])();
     this.player = new __WEBPACK_IMPORTED_MODULE_1__player_js__["a" /* default */]({
       img: "assets/grid-sprite.png",
@@ -655,6 +654,8 @@ update() {
   this.enemies.forEach(enemy => enemy.X += -this.player.velocity_X);
   // Consumables
   this.level.consumables.forEach(consumable => consumable.X += -this.player.velocity_X);
+  // effects
+  this.effects.forEach(fx => fx.X += -this.player.velocity_X);
   // Kim
   this.kim.X += -this.player.velocity_X;
   // Blocks
@@ -702,6 +703,12 @@ render() {
     this.player.spriteAnimCounter += .2;
   }
 
+
+  this.effects.forEach( fx => {
+    fx.draw(this.graphics);
+    fx.spriteAnimCounter += .31;
+  });
+
   //Draw Player
   this.player.draw(this.graphics);
 }
@@ -736,6 +743,123 @@ class Block extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default 
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+
+
+class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor() {
+    super({img: "assets/bullet.png",
+    width: 58,
+    height: 48});
+
+    this.weight = 58;
+    this.height = 48;
+    this.X = this.randomX();
+    this.Y = this.randomY();
+    this.isLeft = true;
+    this.isRight = false;
+    this.gravity = 20;
+    this.weight = 0.1;
+    this.spriteAnimCounter = 0;
+
+  }
+
+  randomX() {
+    return (Math.floor(Math.random() * (9 - 1 + 1)) + 1) * 50 + 900
+  }
+
+  randomY() {
+    return (Math.floor(Math.random() * (8 - 2 + 1)) + 2) * 50
+  }
+
+  reset() {
+    this.X = this.randomX();
+    this.Y = this.randomY();
+  }
+
+  draw(graphics) {
+    const frameWidth = 1875/15;
+    const frameHeight = 1250/10;
+    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
+    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
+
+    let actionStatus = 0;
+    let frameStatus = 0;
+    if (this.velocity_X === 0 && this.velocity_Y === 0) {
+      // standing
+      actionStatus = 0;
+      frameStatus = 0;
+      // frameStatus = standingMod;
+    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
+      // jumping
+      actionStatus = 250;
+      frameStatus = 0;
+    } else if (this.velocity_X !== 0) {
+      // walking
+      actionStatus = 125;
+      frameStatus = walkingMod;
+    }
+
+    // Rotate sprites if going left
+    let playerXCoord = this.X - 43;
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+      playerXCoord = -playerXCoord - 125;
+    }
+
+    graphics.drawImage(this.sprite,
+      frameStatus * frameWidth, actionStatus,
+      frameWidth, frameHeight,
+      playerXCoord, this.Y,
+      125, 125
+    );
+
+    // Rotate sprites back
+    if (this.velocity_X < 0) {
+      graphics.scale(-1, 1);
+    }
+  }
+
+  update() {
+    //Move Left & Right
+    this.X -= 3;
+
+    if (this.X <= -60) {
+      this.reset();
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Bullet);
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+
+
+class Consumable extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor(options) {
+    super(options);
+    this.type = options.type;
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Consumable);
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__effects_js__ = __webpack_require__(9);
+
 
 
 class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
@@ -862,7 +986,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     }
   }
 
-  update(level) {
+  update(game) {
     //Move Left & Right
     if (this.isLeft) this.velocity_X = -4;
     if (this.isRight) this.velocity_X = 4;
@@ -876,7 +1000,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
     //Platform Collision
     // Regular Blocks, Falling off block objects
-    const platformBlocks = level.platformBlocks();
+    const platformBlocks = game.level.platformBlocks();
     platformBlocks.forEach( block => {
       if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
         this.Y = block.Y - this.height;
@@ -885,31 +1009,40 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     });
 
     // Bullets
-    level.enemies.forEach( enemy => {
+    game.level.enemies.forEach( enemy => {
       if (this.isColliding(enemy) && this.Y + this.height < enemy.Y + this.velocity_Y) {
         this.Y = enemy.Y - this.height;
         this.velocity_Y = 0;
         this.X += 1;
       } else if (this.isColliding(enemy)){
-        enemy.reset();
-        this.lives -= 1;
+          game.effects.push(new __WEBPACK_IMPORTED_MODULE_1__effects_js__["a" /* default */]({
+            img: "assets/explosion.png",
+            x: enemy.X,
+            y: enemy.Y,
+            width: 55,
+            height: 32
+          }));
+
+          enemy.reset();
+          setTimeout(function(){ game.effects.shift() }, 1000);
+        // this.lives -= 1;
       }
     });
 
     // Consumables
     let i = 0;
-    while (i < level.consumables.length){
-      if (this.isColliding(level.consumables[i])) {
+    while (i < game.level.consumables.length){
+      if (this.isColliding(game.level.consumables[i])) {
         if (this.lives < 6) {
           this.lives += 1;
-          level.consumables.splice(i, 1)
+          game.level.consumables.splice(i, 1)
         }
       }
       i++;
     }
 
     //Falling Blocks
-    const fallingBlocks = level.fallingBlocks();
+    const fallingBlocks = game.level.fallingBlocks();
     fallingBlocks.forEach( block => {
       if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
         block.gravity = 50;
@@ -922,7 +1055,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     });
 
     //Spring Blocks
-    const springBlocks = level.springBlocks();
+    const springBlocks = game.level.springBlocks();
     springBlocks.forEach( block => {
       if (this.isColliding(block) && this.Y + this.height < block.Y + this.velocity_Y) {
         this.Y = block.Y - this.height;
@@ -950,7 +1083,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1011,7 +1144,7 @@ class Sound {
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1146,7 +1279,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Move objects in relation to Player
     game.update();
     // Game Logic
-    game.player.update(game.level);
+    game.player.update(game);
     game.level.updateEnemies(game);
 
     // Render Game
@@ -1183,181 +1316,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
 
 
-class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+class Effects extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
   constructor(options) {
     super(options);
 
-    this.weight = 58;
-    this.height = 48;
-    this.X = this.randomX();
-    this.Y = this.randomY();
-    this.isLeft = true;
-    this.isRight = false;
-    this.gravity = 20;
-    this.weight = 0.1;
     this.spriteAnimCounter = 0;
-
-  }
-
-  randomX() {
-    return (Math.floor(Math.random() * (9 - 1 + 1)) + 1) * 50 + 900
-  }
-
-  randomY() {
-    return (Math.floor(Math.random() * (8 - 2 + 1)) + 2) * 50
-  }
-
-  reset() {
-    this.X = this.randomX();
-    this.Y = this.randomY();
   }
 
   draw(graphics) {
-    const frameWidth = 1875/15;
-    const frameHeight = 1250/10;
-    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
-    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
-
-    let actionStatus = 0;
-    let frameStatus = 0;
-    if (this.velocity_X === 0 && this.velocity_Y === 0) {
-      // standing
-      actionStatus = 0;
-      frameStatus = 0;
-      // frameStatus = standingMod;
-    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
-      // jumping
-      actionStatus = 250;
-      frameStatus = 0;
-    } else if (this.velocity_X !== 0) {
-      // walking
-      actionStatus = 125;
-      frameStatus = walkingMod;
-    }
-
-    // Rotate sprites if going left
-    let playerXCoord = this.X - 43;
-    if (this.velocity_X < 0) {
-      graphics.scale(-1, 1);
-      playerXCoord = -playerXCoord - 125;
-    }
+    const frameWidth = 55;
+    const frameHeight = 544/17;
+    let frameStatus = 1;
+    let explosionMod = Math.floor(this.spriteAnimCounter) % 17;
 
     graphics.drawImage(this.sprite,
-      frameStatus * frameWidth, actionStatus,
+      0, explosionMod * 32,
       frameWidth, frameHeight,
-      playerXCoord, this.Y,
-      125, 125
+      this.X, this.Y,
+      frameWidth, 32
     );
-
-    // Rotate sprites back
-    if (this.velocity_X < 0) {
-      graphics.scale(-1, 1);
-    }
-  }
-
-  update() {
-    //Move Left & Right
-    this.X -= 3;
-
-    if (this.X <= -60) {
-      this.reset();
-    }
   }
 
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (Bullet);
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-
-
-class Consumable extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
-  constructor(options) {
-    super(options);
-    this.type = options.type;
-  }
-
-  randomX() {
-    return (Math.floor(Math.random() * (5 - 1 + 1)) + 1) * 50 + 900
-  }
-
-  randomY() {
-    return (Math.floor(Math.random() * (8 - 2 + 1)) + 2) * 50
-  }
-
-  reset() {
-    this.X = this.randomX();
-    this.Y = this.randomY();
-  }
-
-  draw(graphics) {
-    const frameWidth = 1875/15;
-    const frameHeight = 1250/10;
-    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
-    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
-
-    let actionStatus = 0;
-    let frameStatus = 0;
-    if (this.velocity_X === 0 && this.velocity_Y === 0) {
-      // standing
-      actionStatus = 0;
-      frameStatus = 0;
-      // frameStatus = standingMod;
-    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
-      // jumping
-      actionStatus = 250;
-      frameStatus = 0;
-    } else if (this.velocity_X !== 0) {
-      // walking
-      actionStatus = 125;
-      frameStatus = walkingMod;
-    }
-
-    // Rotate sprites if going left
-    let playerXCoord = this.X - 43;
-    if (this.velocity_X < 0) {
-      graphics.scale(-1, 1);
-      playerXCoord = -playerXCoord - 125;
-    }
-
-    graphics.drawImage(this.sprite,
-      frameStatus * frameWidth, actionStatus,
-      frameWidth, frameHeight,
-      playerXCoord, this.Y,
-      125, 125
-    );
-
-    // Rotate sprites back
-    if (this.velocity_X < 0) {
-      graphics.scale(-1, 1);
-    }
-  }
-
-  update() {
-    //Move Left & Right
-    this.X -= 3;
-
-    if (this.X <= -60) {
-      this.reset();
-    }
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Consumable);
+/* harmony default export */ __webpack_exports__["a"] = (Effects);
 
 
 /***/ })
