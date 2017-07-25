@@ -88,7 +88,6 @@ class gameObject {
     this.velocity_Y = 0;
     this.gravity = 0;
     this.weight = 0;
-
   }
 
   isColliding(obj) {
@@ -643,75 +642,74 @@ class Game {
     this.enemies = this.level.enemies;
     this.level.generateEnemies();
     this.level.generateConsumables();
-
   }
 
-update() {
-  // Move Objects according to player
+  update() {
+    // Move Objects according to player
 
-  // Enemies
-  this.enemies.forEach(enemy => enemy.X += -this.player.velocity_X);
-  // Consumables
-  this.level.consumables.forEach(consumable => consumable.X += -this.player.velocity_X);
-  // Effects
-  this.effects.forEach(fx => fx.X += -this.player.velocity_X);
-  // Kim
-  this.kim.X += -this.player.velocity_X;
-  // Blocks
-  this.level.blocks.forEach( block => {
-    block.X += -this.player.velocity_X;
-  });
-  this.player.Y += this.player.velocity_Y;
-}
-
-render() {
-  // Clear canvas
-  this.graphics.clearRect( 0, 0, this.gameCanvas.width, this.gameCanvas.height);
-
-  // Render Life Bar
-  for (var i = 0; i < this.player.lives; i++) {
-    let base_image = new Image();
-    base_image.src = 'assets/heart.png';
-    this.graphics.drawImage(base_image, (i * 50) + 10, 10);
+    // Enemies
+    this.enemies.forEach(enemy => enemy.X += -this.player.velocity_X);
+    // Consumables
+    this.level.consumables.forEach(consumable => consumable.X += -this.player.velocity_X);
+    // Effects
+    this.effects.forEach(fx => fx.X += -this.player.velocity_X);
+    // Kim
+    this.kim.X += -this.player.velocity_X;
+    // Blocks
+    this.level.blocks.forEach( block => {
+      block.X += -this.player.velocity_X;
+    });
+    this.player.Y += this.player.velocity_Y;
   }
 
-  // Render All Blocks
-  for (var i = 0; i < this.level.numBlocks(); i++) {
-    this.graphics.drawImage(this.level.blocks[i].sprite, this.level.blocks[i].X, this.level.blocks[i].Y);
+  render() {
+      // Clear canvas
+      this.graphics.clearRect( 0, 0, this.gameCanvas.width, this.gameCanvas.height);
+
+      // Render Life Bar
+      for (var i = 0; i < this.player.lives; i++) {
+        let base_image = new Image();
+        base_image.src = 'assets/heart.png';
+        this.graphics.drawImage(base_image, (i * 50) + 10, 10);
+      }
+
+      // Render All Blocks
+      for (var i = 0; i < this.level.numBlocks(); i++) {
+        this.graphics.drawImage(this.level.blocks[i].sprite, this.level.blocks[i].X, this.level.blocks[i].Y);
+      }
+
+      // Render Enemies
+      this.enemies.forEach(enemy => {
+        this.graphics.drawImage(enemy.sprite, enemy.X, enemy.Y);
+      })
+
+      // Render Consumables
+      this.level.consumables.forEach(consumable => {
+        this.graphics.drawImage(consumable.sprite, consumable.X, consumable.Y);
+      })
+
+      // Draw Kim
+      this.graphics.drawImage(this.kim.sprite, this.kim.X, this.kim.Y);
+
+      // Player Sprites Animation
+      if (this.player.velocity_X === 0 && this.player.velocity_Y === 0) {
+        // Standing, sprites need work
+
+      } else if (this.player.velocity_X !== 0) {
+        // Running
+        this.player.spriteAnimCounter += .2;
+      }
+
+      // Effects Sprites
+      this.effects.forEach( fx => {
+        fx.draw(this.graphics);
+        fx.spriteAnimCounter += .31;
+      });
+
+      //Draw Player
+      this.player.draw(this.graphics);
   }
-
-  // Render Enemies
-  this.enemies.forEach(enemy => {
-    this.graphics.drawImage(enemy.sprite, enemy.X, enemy.Y);
-  })
-
-  // Render Consumables
-  this.level.consumables.forEach(consumable => {
-    this.graphics.drawImage(consumable.sprite, consumable.X, consumable.Y);
-  })
-
-  // Draw Kim
-  this.graphics.drawImage(this.kim.sprite, this.kim.X, this.kim.Y);
-
-  // Player Sprites Animation
-  if (this.player.velocity_X === 0 && this.player.velocity_Y === 0) {
-    // Standing, sprites need work
-
-  } else if (this.player.velocity_X !== 0) {
-    // Running
-    this.player.spriteAnimCounter += .2;
-  }
-
-  // Effects Sprites
-  this.effects.forEach( fx => {
-    fx.draw(this.graphics);
-    fx.spriteAnimCounter += .31;
-  });
-
-  //Draw Player
-  this.player.draw(this.graphics);
-}
-
+  
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -755,11 +753,6 @@ class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     this.X = this.randomX();
     this.Y = this.randomY();
     this.isLeft = true;
-    this.isRight = false;
-    this.gravity = 20;
-    this.weight = 0.1;
-    this.spriteAnimCounter = 0;
-
   }
 
   randomX() {
@@ -773,49 +766,6 @@ class Bullet extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
   reset() {
     this.X = this.randomX();
     this.Y = this.randomY();
-  }
-
-  draw(graphics) {
-    const frameWidth = 1875/15;
-    const frameHeight = 1250/10;
-    let walkingMod = Math.floor(this.spriteAnimCounter) % 8;
-    let standingMod = Math.floor(this.spriteAnimCounter) % 6;
-
-    let actionStatus = 0;
-    let frameStatus = 0;
-    if (this.velocity_X === 0 && this.velocity_Y === 0) {
-      // standing
-      actionStatus = 0;
-      frameStatus = 0;
-      // frameStatus = standingMod;
-    } else if (this.velocity_Y < 0 || this.velocity_Y > 0) {
-      // jumping
-      actionStatus = 250;
-      frameStatus = 0;
-    } else if (this.velocity_X !== 0) {
-      // walking
-      actionStatus = 125;
-      frameStatus = walkingMod;
-    }
-
-    // Rotate sprites if going left
-    let playerXCoord = this.X - 43;
-    if (this.velocity_X < 0) {
-      graphics.scale(-1, 1);
-      playerXCoord = -playerXCoord - 125;
-    }
-
-    graphics.drawImage(this.sprite,
-      frameStatus * frameWidth, actionStatus,
-      frameWidth, frameHeight,
-      playerXCoord, this.Y,
-      125, 125
-    );
-
-    // Rotate sprites back
-    if (this.velocity_X < 0) {
-      graphics.scale(-1, 1);
-    }
   }
 
   update() {
