@@ -871,7 +871,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
     this.distance = 0;
     this.spriteAnimCounter = 0;
 
-    this.lives = 5;
+    this.lives = 4;
 
     this.update = this.update.bind(this);
   }
@@ -1283,7 +1283,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function retry() {
     game.gameCanvas.removeEventListener("click", retry, true);
     // Reset Player
-    game.player.lives = 5;
+    game.player.lives = 4;
     game.player.velocity_X = 0;
     game.player.Y = 0;
     game.player.X = 120;
