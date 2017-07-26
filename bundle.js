@@ -121,7 +121,7 @@ class Level {
 		this.blocks = new Array();
 		this.consumables = new Array();
 		this.enemies = new Array();
-		this.maxEnemies = 3;
+		this.maxEnemies = 2;
 	}
 
 	clear() {
