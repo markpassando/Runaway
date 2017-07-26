@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -447,6 +447,16 @@ const generateLevelOne = () => {
 		height: 11
 	});
 
+	generateBlock({
+		level: levelOne,
+		img: "assets/platform.png",
+		num: 2,
+		x: 3700,
+		y: 125,
+		width: 96,
+		height: 11
+	});
+
 	// Falling area
 	generateBlock({
 		level: levelOne,
@@ -600,9 +610,9 @@ const generateLevelOne = () => {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__player_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__level_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sounds_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sounds_js__ = __webpack_require__(8);
 
 
 
@@ -807,7 +817,41 @@ class Consumable extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* def
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__effects_js__ = __webpack_require__(9);
+
+
+class Effects extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
+  constructor(options) {
+    super(options);
+
+    this.spriteAnimCounter = 0;
+  }
+
+  draw(graphics) {
+    const frameWidth = 55;
+    const frameHeight = 544/17;
+    let frameStatus = 1;
+    let explosionMod = Math.floor(this.spriteAnimCounter) % 17;
+
+    graphics.drawImage(this.sprite,
+      0, explosionMod * 32,
+      frameWidth, frameHeight,
+      this.X, this.Y,
+      frameWidth, 32
+    );
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Effects);
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__effects_js__ = __webpack_require__(6);
 
 
 
@@ -997,7 +1041,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
           enemy.reset();
           setTimeout(function(){ game.effects.shift() }, 1000);
-        this.lives -= 1;
+          this.lives -= 1;
       }
     });
 
@@ -1079,7 +1123,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1140,7 +1184,7 @@ class Sound {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1249,8 +1293,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // game.kim.X = 600;
 
     // Reset Kim
-    game.kim.Y = 280;
-    game.kim.X = 8500;
+    game.kim.Y = 305;
+    game.kim.X = 8400;
 
     // Reset Levels
     game.level = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__objects_level_js__["a" /* default */])();
@@ -1309,40 +1353,6 @@ document.addEventListener("DOMContentLoaded", () => {
   welcome();
 
 });
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__gameObject_js__ = __webpack_require__(0);
-
-
-class Effects extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default */] {
-  constructor(options) {
-    super(options);
-
-    this.spriteAnimCounter = 0;
-  }
-
-  draw(graphics) {
-    const frameWidth = 55;
-    const frameHeight = 544/17;
-    let frameStatus = 1;
-    let explosionMod = Math.floor(this.spriteAnimCounter) % 17;
-
-    graphics.drawImage(this.sprite,
-      0, explosionMod * 32,
-      frameWidth, frameHeight,
-      this.X, this.Y,
-      frameWidth, 32
-    );
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Effects);
 
 
 /***/ })
