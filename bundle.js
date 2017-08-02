@@ -859,6 +859,7 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
   constructor(options) {
     super(options);
 
+    this.isHit = false;
     this.isLeft = false;
     this.isRight = false;
     this.isDuck = false;
@@ -956,7 +957,12 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
 
     let actionStatus = 0;
     let frameStatus = 0;
-    if (this.velocity_X === 0 && this.velocity_Y === 0 && this.isDuck === false) {
+
+    if (this.isHit) {
+      // Getting hit
+      actionStatus = 500;
+      frameStatus = 0;
+    } else if (this.velocity_X === 0 && this.velocity_Y === 0 && this.isDuck === false) {
       // standing
       actionStatus = 0;
       frameStatus = 0;
@@ -1040,8 +1046,12 @@ class Player extends __WEBPACK_IMPORTED_MODULE_0__gameObject_js__["a" /* default
           }));
 
           enemy.reset();
-          setTimeout(function(){ game.effects.shift() }, 1000);
+          this.isHit = true;
+          this.velocity_X = -2;
+          this.velocity_Y = -2;
           this.lives -= 1;
+          setTimeout(function(){ game.effects.shift()}, 1000);
+          setTimeout(function(){ game.player.isHit = false;}, 500);
       }
     });
 
@@ -1206,11 +1216,11 @@ document.addEventListener("DOMContentLoaded", () => {
       game.graphics.drawImage(base_image, 0, 0);
     }
 
-    game.gameCanvas.addEventListener("click", splashControls, true);
+    document.addEventListener("keydown", splashControls, true);
   }
 
   function splashControls() {
-    game.gameCanvas.removeEventListener("click", splashControls, true);
+    document.removeEventListener("keydown", splashControls, true);
     game.graphics.clearRect( 0, 0, game.gameCanvas.width, game.gameCanvas.height);
     let base_image = new Image();
     base_image.src = 'assets/splash-controls.jpg';
@@ -1218,11 +1228,11 @@ document.addEventListener("DOMContentLoaded", () => {
       game.graphics.drawImage(base_image, 0, 0);
     }
 
-    game.gameCanvas.addEventListener("click", splashIntro, true);
+    document.addEventListener("keydown", splashIntro, true);
   }
 
   function splashIntro() {
-    game.gameCanvas.removeEventListener("click", splashIntro, true);
+    document.removeEventListener("keydown", splashIntro, true);
     game.graphics.clearRect( 0, 0, game.gameCanvas.width, game.gameCanvas.height);
     let base_image = new Image();
     base_image.src = 'assets/splash-crying-kim.png';
@@ -1242,7 +1252,7 @@ document.addEventListener("DOMContentLoaded", () => {
       game.graphics.drawImage(base_image, 0, 0);
     }
 
-    game.gameCanvas.addEventListener("click", retry, true);
+    document.addEventListener("keydown", retry, true);
   }
 
   function splashRetryAfterCredits() {
@@ -1253,7 +1263,7 @@ document.addEventListener("DOMContentLoaded", () => {
       game.graphics.drawImage(base_image, 0, 0);
     }
 
-    game.gameCanvas.addEventListener("click", retry, true);
+    document.addEventListener("keydown", retry, true);
   }
 
   function ending() {
@@ -1281,7 +1291,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function retry() {
-    game.gameCanvas.removeEventListener("click", retry, true);
+    document.removeEventListener("keydown", retry, true);
     // Reset Player
     game.player.lives = 4;
     game.player.velocity_X = 0;
@@ -1314,7 +1324,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const mainLoop = () => {
     // Turn off Intro Handler
-    game.gameCanvas.removeEventListener("click", mainLoop, true);
+    document.removeEventListener("keydown", mainLoop, true);
 
     // Move objects in relation to Player
     game.update();
